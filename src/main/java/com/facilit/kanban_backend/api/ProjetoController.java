@@ -18,9 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProjetoController implements ProjetosApi {
 
-//    private final ProjetoService projetoService;
-
-
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return ProjetosApi.super.getRequest();
