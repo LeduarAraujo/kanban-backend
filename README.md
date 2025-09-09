@@ -22,7 +22,7 @@ mvn spring-boot:run
 ```
 
 ### Como gerar as targets local
- Os comandos abaixo, são usados quando apenas o docker está instalado local. 
+- Os comandos abaixo, são usados quando apenas o docker está instalado local. 
     Ele irá rodar em uma instancia maven.
 
 ```bash
@@ -68,6 +68,15 @@ JaCoCo configurado para gerar relatório em `target/site/jacoco/index.html`.
 - `repository/` JPA
 - `service/` regras de negócio, transições, indicadores
 - `api/` controllers, DTOs, mappers, exceções
+
+# 🛠️ Tecnologias Utilizadas
+- `Java 17` Linguagem adotada para obter mais compatibilidade
+- `Spring Boot 3`
+- `Swagger/OpenApi`
+- `Git`
+- `Maven`
+- `Docker`
+- `JUnit`
 
 # 🚀 Próximos passos / Diferenciais
 - GraphQL (schema para Projetos/Responsáveis)
