@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ResponsavelRepository extends JpaRepository<Responsavel, UUID> {
+public interface ResponsavelRepository extends JpaRepository<Responsavel, Long> {
     Optional<Responsavel> findByEmail(String email);
 
     boolean existsByEmail(String email);

@@ -1,4 +1,4 @@
-package com.facilit.kanban_backend.controller;
+package com.facilit.kanban_backend.web.controller;
 
 import com.baeldung.openapi.api.UsuarioApi;
 import com.baeldung.openapi.model.SucessMessageRepresentation;
