@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.facilit.kanban_backend.domain.Projeto;
-import com.facilit.kanban_backend.domain.ProjetoStatus;
-import com.facilit.kanban_backend.domain.Responsavel;
+import com.facilit.kanban_backend.domain.entity.Projeto;
+import com.facilit.kanban_backend.domain.entity.ProjetoStatus;
+import com.facilit.kanban_backend.domain.entity.Responsavel;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
 import com.facilit.kanban_backend.repository.ResponsavelRepository;

@@ -157,6 +157,11 @@
 							<configOptions>
 								<useJakartaEe>true</useJakartaEe>
 								<mainClass>com.facilit.kanban_backend.KanbanBackendApplication</mainClass>
+                                <additionalModelTypeAnnotations>
+                                    @lombok.Builder
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                </additionalModelTypeAnnotations>
 							</configOptions>
 							<generateApiTests>false</generateApiTests>
 						</configuration>

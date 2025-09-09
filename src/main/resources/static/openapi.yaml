@@ -177,13 +177,11 @@ components:
           format: int64
         nome:
           type: string
-        username:
+        email:
           type: string
         password:
           type: string
           format: password
-        email:
-          type: string
 
     Cargo:
       type: object

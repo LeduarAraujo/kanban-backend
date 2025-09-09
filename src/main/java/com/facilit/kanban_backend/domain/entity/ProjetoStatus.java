@@ -1,4 +1,4 @@
-package com.facilit.kanban_backend.domain;
+package com.facilit.kanban_backend.domain.entity;
 
 public enum ProjetoStatus {
     A_INICIAR,
