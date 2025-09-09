@@ -1,9 +1,5 @@
 package com.facilit.kanban_backend.mapper;
 
-import com.facilit.kanban_backend.domain.Projeto;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ProjetoMapper {
 
 

@@ -13,6 +13,8 @@ tags:
     description: Dados relacionados aos responsaveis dos projetos
   - name: Indicador
     description: Dados dos indicadores
+  - name: Usuario
+    description: Dados de cadastro do usuário
 
 paths:
   /projetos:
@@ -48,13 +50,12 @@ paths:
         - Projeto
       summary: Realiza o cadastro de Projetos
       description: Realiza o cadastro de Projetos
-      parameters:
 
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CadastroFuncionarioRequest'
+              $ref: '#/components/schemas/Projeto'
         required: true
       responses:
         '200':
@@ -86,31 +87,19 @@ paths:
             - write
             - read
 
-  /api/v1/incluirespaco:
+  /usuario:
     post:
-      operationId: incluirEspaco
+      operationId: cadastrarUsuario
       tags:
-        - Espaco
-      summary: Realiza o cadastro do espaco
-      description: Realiza o cadastro do espaco
-      parameters:
-        - name: token_jwt
-          in: header
-          required: true
-          schema:
-            type: string
-        - name: idFuncionario
-          in: header
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - Usuario
+      summary: realiza o cadastro do usuario
+      description: realiza o cadastro do usuario para permitir o uso dos usuarios
 
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: '#/components/schemas/CadastroEspacoRequest'
+              $ref: '#/components/schemas/Usuario'
         required: true
       responses:
         '200':
@@ -142,55 +131,6 @@ paths:
             - write
             - read
 
-  /api/v1/listarespacos:
-    get:
-      operationId: listarEspacos
-      tags:
-        - Espaco
-      summary: Lista todos os Espacos
-      description: Lista todos os espacos cadastrados
-      parameters:
-        - name: token_jwt
-          in: header
-          required: true
-          schema:
-            type: string
-        - name: idFuncionario
-          in: header
-          required: true
-          schema:
-            type: integer
-            format: int64
-
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListaEspacosResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
-      security:
-        - gerenciador:
-            - write
-            - read
 
 components:
   schemas:
@@ -237,13 +177,11 @@ components:
           format: int64
         nome:
           type: string
-        username:
+        email:
           type: string
         password:
           type: string
           format: password
-        email:
-          type: string
 
     Cargo:
       type: object

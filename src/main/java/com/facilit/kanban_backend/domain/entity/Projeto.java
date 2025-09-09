@@ -1,4 +1,4 @@
-package com.facilit.kanban_backend.domain;
+package com.facilit.kanban_backend.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

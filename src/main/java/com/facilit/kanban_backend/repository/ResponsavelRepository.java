@@ -1,6 +1,6 @@
 package com.facilit.kanban_backend.repository;
 
-import com.facilit.kanban_backend.domain.Responsavel;
+import com.facilit.kanban_backend.domain.entity.Responsavel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

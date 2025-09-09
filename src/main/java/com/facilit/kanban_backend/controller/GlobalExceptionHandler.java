@@ -1,9 +1,8 @@
-package com.facilit.kanban_backend.api;
+package com.facilit.kanban_backend.controller;
 
 import com.facilit.kanban_backend.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
