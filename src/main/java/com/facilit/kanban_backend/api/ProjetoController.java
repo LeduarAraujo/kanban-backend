@@ -1,14 +1,14 @@
 package com.facilit.kanban_backend.api;
 
-import com.baeldung.openapi.api.ProjetosApi;
-import com.baeldung.openapi.model.ProjetoDTORepresentation;
-import com.baeldung.openapi.model.ProjetoRepresentation;
-import com.baeldung.openapi.model.TransicaoStatusDTORepresentation;
+import com.baeldung.openapi.api.ApiApi;
+
+import com.baeldung.openapi.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,40 +16,32 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class ProjetoController implements ProjetosApi {
+public class ProjetoController implements ApiApi{
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
-        return ProjetosApi.super.getRequest();
+        return ApiApi.super.getRequest();
     }
 
     @Override
-    public ResponseEntity<List<ProjetoRepresentation>> projetosGet() {
-        return ResponseEntity.ok().body(new ArrayList<>());
+    public ResponseEntity<SucessMessageRepresentation> cadastroFuncionario(String tokenJwt, Long idFuncionario, CadastroFuncionarioRequestRepresentation cadastroFuncionarioRequestRepresentation) {
+        return ApiApi.super.cadastroFuncionario(tokenJwt, idFuncionario, cadastroFuncionarioRequestRepresentation);
     }
 
     @Override
-    public ResponseEntity<Void> projetosIdDelete(Integer id) {
-        return ProjetosApi.super.projetosIdDelete(id);
+    public ResponseEntity<SucessMessageRepresentation> incluirEspaco(String tokenJwt, Long idFuncionario, String nmEspaco, String dsEndereco, String instagram, MultipartFile logoEspaco) {
+        return ApiApi.super.incluirEspaco(tokenJwt, idFuncionario, nmEspaco, dsEndereco, instagram, logoEspaco);
     }
 
     @Override
-    public ResponseEntity<ProjetoRepresentation> projetosIdPut(Integer id, ProjetoDTORepresentation projetoDTORepresentation) {
-        return ProjetosApi.super.projetosIdPut(id, projetoDTORepresentation);
+    public ResponseEntity<SigninUsuarioResponseRepresentation> iniciarSessao(SigninUsuarioRequestRepresentation signinUsuarioRequestRepresentation) {
+        return ApiApi.super.iniciarSessao(signinUsuarioRequestRepresentation);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public ResponseEntity<ProjetoRepresentation> projetosIdTransicoesPost(Integer id, TransicaoStatusDTORepresentation transicaoStatusDTORepresentation) {
-        return ProjetosApi.super.projetosIdTransicoesPost(id, transicaoStatusDTORepresentation);
-    }
+    public ResponseEntity<ListaEspacosResponseRepresentation> listarEspacos(String tokenJwt, Long idFuncionario) {
 
-    @Override
-    public ResponseEntity<ProjetoRepresentation> projetosPost(ProjetoDTORepresentation projetoDTORepresentation) {
-        return ProjetosApi.super.projetosPost(projetoDTORepresentation);
-    }
-
-    @Override
-    public ResponseEntity<List<ProjetoRepresentation>> projetosStatusStatusGet(String status) {
-        return ResponseEntity.ok().body(new ArrayList<>());
+        return ResponseEntity.ok().body(new ListaEspacosResponseRepresentation());
     }
 }

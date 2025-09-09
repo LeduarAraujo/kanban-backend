@@ -1,156 +1,218 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  title: Kanban Backend API
+  title: Kanban Backend API - OpenAPI 3.0
   description: API para gerenciamento de projetos Kanban, responsáveis e indicadores.
+  contact:
+    email: leduar.araujo@hotmail.com
   version: 1.0.0
-servers:
-  - url: /api
+
+tags:
+  - name: Projeto
+    description: Dados relacionados aos projetos
+  - name: Responsavel
+    description: Dados relacionados aos responsaveis dos projetos
+  - name: Indicador
+    description: Dados dos indicadores
+
 paths:
   /projetos:
     get:
+      operationId: listarProcessos
+      tags:
+        - Projeto
       summary: Lista todos os projetos
+      description: Lista de projetos
       responses:
         '200':
-          description: Lista de projetos
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Projeto'
+                $ref: '#/components/schemas/ListaProjetoResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
     post:
-      summary: Cria um novo projeto
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProjetoDTO'
-      responses:
-        '201':
-          description: Projeto criado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projeto'
-  /projetos/{id}:
-    put:
-      summary: Atualiza um projeto
+      operationId: cadastrarProjeto
+      tags:
+        - Projeto
+      summary: Realiza o cadastro de Projetos
+      description: Realiza o cadastro de Projetos
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProjetoDTO'
-      responses:
-        '200':
-          description: Projeto atualizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Projeto'
-        '404':
-          description: Projeto não encontrado
-    delete:
-      summary: Remove um projeto
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '204':
-          description: Projeto removido
-        '404':
-          description: Projeto não encontrado
-  /projetos/status/{status}:
-    get:
-      summary: Lista projetos por status (kanban)
-      parameters:
-        - in: path
-          name: status
+        - name: token_jwt
+          in: header
           required: true
           schema:
             type: string
-      responses:
-        '200':
-          description: Lista de projetos por status
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Projeto'
-  /projetos/{id}/transicoes:
-    post:
-      summary: Solicita transição de status do projeto
-      parameters:
-        - in: path
-          name: id
+        - name: idFuncionario
+          in: header
           required: true
           schema:
             type: integer
+            format: int64
+
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TransicaoStatusDTO'
+              $ref: '#/components/schemas/CadastroFuncionarioRequest'
+        required: true
       responses:
         '200':
-          description: Status do projeto atualizado
+          description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Projeto'
-        '404':
-          description: Projeto não encontrado
-  /responsaveis:
+                $ref: '#/components/schemas/SucessMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+      security:
+        - gerenciador:
+            - write
+            - read
+
+  /api/v1/incluirespaco:
+    post:
+      operationId: incluirEspaco
+      tags:
+        - Espaco
+      summary: Realiza o cadastro do espaco
+      description: Realiza o cadastro do espaco
+      parameters:
+        - name: token_jwt
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: idFuncionario
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CadastroEspacoRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SucessMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+      security:
+        - gerenciador:
+            - write
+            - read
+
+  /api/v1/listarespacos:
     get:
-      summary: Lista todos os responsáveis
+      operationId: listarEspacos
+      tags:
+        - Espaco
+      summary: Lista todos os Espacos
+      description: Lista todos os espacos cadastrados
+      parameters:
+        - name: token_jwt
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: idFuncionario
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+
       responses:
         '200':
-          description: Lista de responsáveis
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Responsavel'
-  /indicadores/atraso-medio-por-status:
-    get:
-      summary: Obtém o atraso médio por status
-      responses:
-        '200':
-          description: Indicador de atraso médio por status
+                $ref: '#/components/schemas/ListaEspacosResponse'
+        '400':
+          description: Bad Request
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties:
-                  type: number
-                  format: float
-  /indicadores/quantidade-por-status:
-    get:
-      summary: Obtém a quantidade de projetos por status
-      responses:
-        '200':
-          description: Indicador de quantidade por status
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties:
-                  type: integer
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+      security:
+        - gerenciador:
+            - write
+            - read
+
 components:
   schemas:
+    ListaProjetoResponse:
+      type: object
+      properties:
+        listaprojetos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Projeto'
+
     Projeto:
       type: object
       properties:
@@ -170,37 +232,39 @@ components:
         dataFim:
           type: string
           format: date
-    ProjetoDTO:
+
+
+    SucessMessage:
       type: object
-      required:
-        - nome
-        - status
       properties:
-        nome:
+        message:
           type: string
-        descricao:
-          type: string
-        status:
-          type: string
-        responsavelId:
+          example: "Sucesso"
+        code:
           type: integer
-        dataInicio:
-          type: string
-          format: date
-        dataFim:
-          type: string
-          format: date
-    TransicaoStatusDTO:
-      type: object
-      required:
-        - novoStatus
-      properties:
-        novoStatus:
-          type: string
-    Responsavel:
+          example: 0
+
+    ErrorMessage:
       type: object
       properties:
-        id:
+        message:
+          type: string
+          example: "Error message"
+        errorCode:
           type: integer
-        nome:
-          type: string
+          example: 123
+
+  securitySchemes:
+    gerenciador:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write: escrita
+            read: leitura
+
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
