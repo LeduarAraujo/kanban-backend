@@ -3,7 +3,6 @@ package integration;
 import com.baeldung.openapi.model.UsuarioRepresentation;
 import com.baeldung.openapi.model.SucessMessageRepresentation;
 import com.facilit.kanban_backend.KanbanBackendApplication;
-import com.facilit.kanban_backend.domain.entity.UsuarioEntity;
 import com.facilit.kanban_backend.exception.EmailEmUsoException;
 import com.facilit.kanban_backend.repository.UsuarioRepository;
 import com.facilit.kanban_backend.service.UsuarioService;
@@ -15,6 +14,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static fixtures.UsuarioFixtures.*;
 
 @SpringBootTest(classes = KanbanBackendApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -37,33 +38,21 @@ public class UsuarioServiceTest {
 
     @Test
     public void cadastrarUsuario_sucess() throws EmailEmUsoException {
-        UsuarioRepresentation usuario = new UsuarioRepresentation();
-        usuario.setEmail("teste@teste.com");
-        usuario.setNome("Usuário Teste");
-
-        SucessMessageRepresentation result = usuarioService.cadastrarUsuario(usuario);
+        SucessMessageRepresentation result = usuarioService.
+                cadastrarUsuario(criarUsuario());
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals("O usuário Usuário Teste foi cadastrado com sucesso!", result.getMessage());
-
     }
 
     @Test
     public void cadastrarUsuario_error() throws EmailEmUsoException {
         // Cria e salva usuário com o mesmo e-mail
-        UsuarioEntity usuarioExistente = new UsuarioEntity();
-        usuarioExistente.setEmail("teste@teste.com");
-        usuarioExistente.setNome("Usuário Existente");
-
-        usuarioRepository.save(usuarioExistente);
+        usuarioRepository.save(criarUsuarioEntity());
 
         // Tenta cadastrar outro com o mesmo e-mail
-        UsuarioRepresentation usuarioNovo = new UsuarioRepresentation();
-        usuarioNovo.setEmail("teste@teste.com");
-        usuarioNovo.setNome("Outro Nome");
-
         Assertions.assertThrows(EmailEmUsoException.class, () -> {
-            usuarioService.cadastrarUsuario(usuarioNovo);
+            usuarioService.cadastrarUsuario(criarUsuario());
         });
     }
 }
