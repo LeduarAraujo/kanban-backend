@@ -1,6 +1,6 @@
 package com.facilit.kanban_backend.api;
 
-import com.baeldung.openapi.api.ApiApi;
+import com.baeldung.openapi.api.ProjetosApi;
 
 import com.baeldung.openapi.model.*;
 import lombok.RequiredArgsConstructor;
@@ -16,32 +16,6 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class ProjetoController implements ApiApi{
+public class ProjetoController implements ProjetosApi{
 
-    @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return ApiApi.super.getRequest();
-    }
-
-    @Override
-    public ResponseEntity<SucessMessageRepresentation> cadastroFuncionario(String tokenJwt, Long idFuncionario, CadastroFuncionarioRequestRepresentation cadastroFuncionarioRequestRepresentation) {
-        return ApiApi.super.cadastroFuncionario(tokenJwt, idFuncionario, cadastroFuncionarioRequestRepresentation);
-    }
-
-    @Override
-    public ResponseEntity<SucessMessageRepresentation> incluirEspaco(String tokenJwt, Long idFuncionario, String nmEspaco, String dsEndereco, String instagram, MultipartFile logoEspaco) {
-        return ApiApi.super.incluirEspaco(tokenJwt, idFuncionario, nmEspaco, dsEndereco, instagram, logoEspaco);
-    }
-
-    @Override
-    public ResponseEntity<SigninUsuarioResponseRepresentation> iniciarSessao(SigninUsuarioRequestRepresentation signinUsuarioRequestRepresentation) {
-        return ApiApi.super.iniciarSessao(signinUsuarioRequestRepresentation);
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public ResponseEntity<ListaEspacosResponseRepresentation> listarEspacos(String tokenJwt, Long idFuncionario) {
-
-        return ResponseEntity.ok().body(new ListaEspacosResponseRepresentation());
-    }
 }
