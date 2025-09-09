@@ -101,18 +101,27 @@ Relatório de cobertura disponível em:
 ---
 
 ## 📂 Estrutura do Projeto
-- `api/` – Controllers e Handdlers.
-- `config/` – Configurações do projeto e de acesso web.
-- `domain/` – Entidades e enums.
-  - `entity` – Entidades da base de dados.
-  - `enums` – Constantes predefinidas.
-- `exception/` – Controle de exceções de negócio.
-- `mapper/` – Mapeamento dos DTOs para os Representations.
-- `repository/` – Repositórios JPA.
-- `service/` – Regras de negócio, transições e indicadores.
-- `utils/` – Regras de negócio, transições e indicadores.
 
----
+```
+src/main/java/com/facilit/kanban_backend/
+├── controller/     # Controllers REST e Handdlers.
+├── config/         # Configurações do projeto e de acesso web.
+├── domain/         # Entidades e enums.
+    ├── entity/     # Entidades da base de dados.
+    ├── enums/      # Constantes predefinidas.
+├── exception/      # Controle de exceções de negócio.
+├── mapper/         # Mapeamento dos DTOs para os Representations.
+├── repository/     # Repositórios JPA.
+├── service/        # Regras de negócio, transições e indicadores.
+├── utils/          # Utilitários.
+├── dto/            # Objetos de transferencias de dados.
+├── security/       # Configurações de segurança.
+
+src/test/java/
+├── integration/     # Testes de integração
+├── unit/           # Testes unitários
+└── fixtures/       # Dados de teste
+```
 
 ## 🛠️ Tecnologias Utilizadas
 - Java 17
