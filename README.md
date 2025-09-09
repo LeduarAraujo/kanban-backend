@@ -18,8 +18,9 @@ mvn spring-boot:run
 ```
 
 ## Como gerar as targets local
-
+```bash
 docker run --rm -v "$PWD":/app -w /app maven:3.9.6-eclipse-temurin-17 mvn clean install
+```
 
 ## Endpoints principais
 - `GET /api/projetos` – lista
