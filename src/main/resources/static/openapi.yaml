@@ -1,0 +1,206 @@
+openapi: 3.0.1
+info:
+  title: Kanban Backend API
+  description: API para gerenciamento de projetos Kanban, responsáveis e indicadores.
+  version: 1.0.0
+servers:
+  - url: /api
+paths:
+  /projetos:
+    get:
+      summary: Lista todos os projetos
+      responses:
+        '200':
+          description: Lista de projetos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Projeto'
+    post:
+      summary: Cria um novo projeto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjetoDTO'
+      responses:
+        '201':
+          description: Projeto criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+  /projetos/{id}:
+    put:
+      summary: Atualiza um projeto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjetoDTO'
+      responses:
+        '200':
+          description: Projeto atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+        '404':
+          description: Projeto não encontrado
+    delete:
+      summary: Remove um projeto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Projeto removido
+        '404':
+          description: Projeto não encontrado
+  /projetos/status/{status}:
+    get:
+      summary: Lista projetos por status (kanban)
+      parameters:
+        - in: path
+          name: status
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de projetos por status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Projeto'
+  /projetos/{id}/transicoes:
+    post:
+      summary: Solicita transição de status do projeto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransicaoStatusDTO'
+      responses:
+        '200':
+          description: Status do projeto atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+        '404':
+          description: Projeto não encontrado
+  /responsaveis:
+    get:
+      summary: Lista todos os responsáveis
+      responses:
+        '200':
+          description: Lista de responsáveis
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Responsavel'
+  /indicadores/atraso-medio-por-status:
+    get:
+      summary: Obtém o atraso médio por status
+      responses:
+        '200':
+          description: Indicador de atraso médio por status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                  format: float
+  /indicadores/quantidade-por-status:
+    get:
+      summary: Obtém a quantidade de projetos por status
+      responses:
+        '200':
+          description: Indicador de quantidade por status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+components:
+  schemas:
+    Projeto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        status:
+          type: string
+        responsavelId:
+          type: integer
+        dataInicio:
+          type: string
+          format: date
+        dataFim:
+          type: string
+          format: date
+    ProjetoDTO:
+      type: object
+      required:
+        - nome
+        - status
+      properties:
+        nome:
+          type: string
+        descricao:
+          type: string
+        status:
+          type: string
+        responsavelId:
+          type: integer
+        dataInicio:
+          type: string
+          format: date
+        dataFim:
+          type: string
+          format: date
+    TransicaoStatusDTO:
+      type: object
+      required:
+        - novoStatus
+      properties:
+        novoStatus:
+          type: string
+    Responsavel:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string

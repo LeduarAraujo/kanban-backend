@@ -1,0 +1,63 @@
+{
+  "info": {
+    "name": "Kanban API",
+    "_postman_id": "kanban-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar Projetos",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/projetos"
+      }
+    },
+    {
+      "name": "Criar Projeto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\": \"Meu Projeto\", \"inicioPrevisto\": \"2025-09-10\", \"terminoPrevisto\": \"2025-09-20\", \"responsaveisIds\": []}"
+        },
+        "url": "{{baseUrl}}/api/projetos"
+      }
+    },
+    {
+      "name": "Transicionar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"para\": \"EM_ANDAMENTO\"}"
+        },
+        "url": "{{baseUrl}}/api/projetos/{{id}}/transicoes"
+      }
+    },
+    {
+      "name": "Indicadores - Quantidade",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/indicadores/quantidade-por-status"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
