@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UsuarioController implements UsuarioApi {
 
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     /**
      * POST /usuario : realiza o cadastro do usuario
