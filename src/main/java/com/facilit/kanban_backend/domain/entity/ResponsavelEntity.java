@@ -10,23 +10,25 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "USUARIO")
+@Table(name = "RESPONSAVEL")
 @EntityListeners(AuditingEntityListener.class)
-public class UsuarioEntity {
+public class ResponsavelEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column( name = "id")
     Long id;
 
-    @Column( name = "nome")
-    String nome;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    UsuarioEntity usuario;
 
-    @Column( name = "email", unique = true)
-    String email;
+    @ManyToOne
+    @JoinColumn(name = "secretaria_id", nullable = false)
+    SecretariaEntity secretaria;
 
-    @Column( name = "password")
-    String password;
+    @ManyToOne
+    @JoinColumn(name = "cargo_id", nullable = false)
+    CargoEntity cargo;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

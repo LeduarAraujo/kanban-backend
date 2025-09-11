@@ -36,9 +36,12 @@ Este projeto foi desenvolvido como parte de um **desafio técnico backend** com 
 ```bash
 # Build + subir banco e aplicação
 docker compose up --build
-# API: http://localhost:8080
-# Swagger: http://localhost:8080/swagger-ui.html
 ```
+
+### 🚀 Documentação / Contratos
+- Swagger UI: `http://localhost:8080/swagger-ui`
+- API Docs: `http://localhost:8080/v3/api-docs`
+- H2 Console: `http://localhost:8080/h2-console`
 
 ### Executar Localmente (sem Docker)
 Requisitos: **Java 17**, **Maven**, **H2** (configurar credenciais no `application.yml`).
