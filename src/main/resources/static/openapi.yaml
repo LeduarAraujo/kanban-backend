@@ -212,7 +212,7 @@ components:
     Secretaria:
       type: object
       properties:
-        is:
+        id:
           type: integer
           format: int64
         nmSecretaria:
