@@ -24,7 +24,7 @@ public class OpenApiConfig {
                                 .email("contato@facilit.com")))
                 .servers(List.of(
                         new Server().url("http://localhost:8080").description("Servidor de Desenvolvimento"),
-                        new Server().url("https://api.kanban.facilit.com").description("Servidor de Produção")
+                        new Server().url("http://localhost:8080").description("Servidor de Produção")
                 ));
     }
 }

@@ -87,6 +87,280 @@ paths:
             - write
             - read
 
+  /projetos/{id}:
+    get:
+      operationId: buscarProjetoPorId
+      tags:
+        - Projeto
+      summary: Buscar projeto por ID
+      description: Retorna um projeto específico pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do projeto
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+        '404':
+          description: Projeto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+    put:
+      operationId: atualizarProjeto
+      tags:
+        - Projeto
+      summary: Atualizar projeto
+      description: Atualiza um projeto existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do projeto
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Projeto'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Projeto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+    delete:
+      operationId: excluirProjeto
+      tags:
+        - Projeto
+      summary: Excluir projeto
+      description: Exclui um projeto
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do projeto
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Projeto excluído com sucesso
+        '404':
+          description: Projeto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /projetos/{id}/status:
+    put:
+      operationId: moverStatusProjeto
+      tags:
+        - Projeto
+      summary: Mover status do projeto
+      description: Move o projeto para um novo status seguindo as regras de transição
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do projeto
+          schema:
+            type: integer
+            format: int64
+        - name: novoStatus
+          in: query
+          required: true
+          description: Novo status do projeto
+          schema:
+            type: string
+            enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+      responses:
+        '200':
+          description: Status alterado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projeto'
+        '400':
+          description: Transição inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Projeto não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /projetos/por-status:
+    get:
+      operationId: listarProjetosPorStatus
+      tags:
+        - Projeto
+      summary: Listar projetos por status
+      description: Lista projetos filtrados por status específico
+      parameters:
+        - name: status
+          in: query
+          required: true
+          description: Status para filtrar
+          schema:
+            type: string
+            enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+        - name: page
+          in: query
+          description: Número da página
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Tamanho da página
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          description: Campo para ordenação
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaProjetoResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /indicadores/projetos/quantidade-por-status:
+    get:
+      operationId: quantidadeProjetosPorStatus
+      tags:
+        - Indicador
+      summary: Quantidade de projetos por status
+      description: Retorna a quantidade de projetos agrupados por status
+      responses:
+        '200':
+          description: Indicadores retornados com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                      - type: integer
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /indicadores/projetos/media-atraso-por-status:
+    get:
+      operationId: mediaDiasAtrasoPorStatus
+      tags:
+        - Indicador
+      summary: Média de dias de atraso por status
+      description: Retorna a média de dias de atraso para um status específico
+      parameters:
+        - name: status
+          in: query
+          required: true
+          description: Status do projeto para calcular a média
+          schema:
+            type: string
+            enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+      responses:
+        '200':
+          description: Média calculada com sucesso
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
   /usuario:
     post:
       operationId: cadastrarUsuario
