@@ -155,3 +155,8 @@ Foca em **boas práticas de arquitetura, organização e documentação**.
 ## 📦 Coleção Postman/Insomnia
 Os endpoints podem ser importados diretamente do Swagger:  
 `/api-docs`
+
+
+# 📋 Diagrama de entidades
+
+![img.png](img.png)
