@@ -1,219 +1,236 @@
 package com.facilit.kanban_backend.service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.facilit.kanban_backend.domain.entity.Projeto;
-import com.facilit.kanban_backend.domain.entity.ProjetoStatus;
-import com.facilit.kanban_backend.domain.entity.Responsavel;
+import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
+import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
+import com.facilit.kanban_backend.dto.RespostaContagemProjetosPorStatusDTO;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
-import com.facilit.kanban_backend.repository.ResponsavelRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
-    private final ResponsavelRepository responsavelRepository;
 
-    public ProjetoService(ProjetoRepository pProjetoRepository, ResponsavelRepository pResponsavelRepository) {
-        this.projetoRepository = pProjetoRepository;
-        this.responsavelRepository = pResponsavelRepository;
+    public ProjetoEntity salvar(ProjetoEntity projeto) {
+        recalcularMetricasEStatus(projeto);
+        return projetoRepository.save(projeto);
     }
 
-    @Transactional
-    public Projeto criarOuAtualizar(Projeto p, Set<UUID> responsaveisIds) {
-        if (responsaveisIds != null) {
-            Set<Responsavel> rs = responsavelRepository.findAllById(responsaveisIds).stream()
-                    .collect(Collectors.toSet());
-            p.setResponsaveis(rs);
+    public ProjetoEntity buscarOuFalhar(Long id) {
+        return projetoRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Projeto não encontrado"));
+    }
+
+    public Page<ProjetoEntity> listar(Pageable pageable) {
+        return projetoRepository.findAll(pageable);
+    }
+
+    public Page<ProjetoEntity> listarPorStatus(StatusProjetoEnum status, Pageable pageable) {
+        return projetoRepository.findByStatus(status, pageable);
+    }
+
+    public ProjetoEntity moverStatus(Long id, StatusProjetoEnum novoStatus) {
+        ProjetoEntity projeto = buscarOuFalhar(id);
+
+        aplicarAcoesAutomaticasDeTransicao(projeto, novoStatus);
+        recalcularMetricasEStatus(projeto);
+
+        if (projeto.getStatus() != novoStatus) {
+            throw new BusinessException(mensagemInconsistenciaStatus(projeto, novoStatus));
         }
-        aplicarRegrasCalculo(p);
-        return projetoRepository.save(p);
+
+        return projetoRepository.save(projeto);
     }
 
-    public Optional<Projeto> buscar(UUID id) {
-        return projetoRepository.findById(id);
+    public List<RespostaContagemProjetosPorStatusDTO> quantidadeProjetosPorStatus() {
+        return projetoRepository.countProjetosByStatus();
     }
 
-    public List<Projeto> listar() {
-        return projetoRepository.findAll();
+    public Double mediaDiasAtrasoPorStatus(StatusProjetoEnum status) {
+        return projetoRepository.avgDiasAtrasoByStatus(status);
     }
 
-    public List<Projeto> listarPorStatus(ProjetoStatus status) {
-        return projetoRepository.findByStatus(status);
+    private void aplicarAcoesAutomaticasDeTransicao(ProjetoEntity projeto, StatusProjetoEnum novoStatus) {
+        StatusProjetoEnum atual = projeto.getStatus();
+        LocalDateTime agora = LocalDateTime.now();
+
+        // A iniciar -> Em andamento
+        if (atual == StatusProjetoEnum.A_INICIAR && novoStatus == StatusProjetoEnum.EM_ANDAMENTO) {
+            projeto.setInicioRealizado(agora);
+            return;
+        }
+        // A iniciar -> Concluido
+        if (atual == StatusProjetoEnum.A_INICIAR && novoStatus == StatusProjetoEnum.CONCLUIDO) {
+            projeto.setTerminoRealizado(agora);
+            return;
+        }
+        // Em andamento -> A iniciar
+        if (atual == StatusProjetoEnum.EM_ANDAMENTO && novoStatus == StatusProjetoEnum.A_INICIAR) {
+            projeto.setInicioRealizado(null);
+            return;
+        }
+        // A iniciar -> Atrasado
+        if (atual == StatusProjetoEnum.A_INICIAR && novoStatus == StatusProjetoEnum.ATRASADO) {
+            LocalDate hoje = LocalDate.now();
+            if (projeto.getInicioPrevisto() != null && projeto.getInicioPrevisto().toLocalDate().isAfter(hoje)) {
+                throw new BusinessException("Não é permitido mover para ATRASADO antes do Início Previsto. Ajuste as datas.");
+            }
+            // sem ação automática; recálculo determinará se realmente é atrasado
+            return;
+        }
+
+        // Em andamento -> Atrasado (bloquear; orientar)
+        if (atual == StatusProjetoEnum.EM_ANDAMENTO && novoStatus == StatusProjetoEnum.ATRASADO) {
+            throw new BusinessException("Para ir a ATRASADO a partir de EM ANDAMENTO, remova Início Realizado (voltará a não iniciado) ou ajuste Início/Término Previsto para data < hoje.");
+        }
+
+        // Em andamento -> Concluido
+        if (atual == StatusProjetoEnum.EM_ANDAMENTO && novoStatus == StatusProjetoEnum.CONCLUIDO) {
+            projeto.setTerminoRealizado(agora);
+            return;
+        }
+
+        // Atrasado -> A iniciar (bloquear; orientar)
+        if (atual == StatusProjetoEnum.ATRASADO && novoStatus == StatusProjetoEnum.A_INICIAR) {
+            throw new BusinessException("Ajuste Início/Término Previsto para datas >= hoje e garanta Início/Término Realizados vazios para voltar a A INICIAR.");
+        }
+
+        // Atrasado -> Em andamento (bloquear; orientar)
+        if (atual == StatusProjetoEnum.ATRASADO && novoStatus == StatusProjetoEnum.EM_ANDAMENTO) {
+            throw new BusinessException("Para ir a EM ANDAMENTO a partir de ATRASADO, ajuste Início/Término Previsto para datas > hoje e defina Início Realizado.");
+        }
+
+        // Atrasado -> Concluido
+        if (atual == StatusProjetoEnum.ATRASADO && novoStatus == StatusProjetoEnum.CONCLUIDO) {
+            projeto.setTerminoRealizado(agora);
+            return;
+        }
+
+        // Concluido -> A iniciar (bloquear; orientar)
+        if (atual == StatusProjetoEnum.CONCLUIDO && novoStatus == StatusProjetoEnum.A_INICIAR) {
+            throw new BusinessException("Remova Término Realizado e ajuste Início/Término Previsto para data > hoje para voltar a A INICIAR.");
+        }
+
+        // Concluido -> Em andamento (remover término; validar não vira ATRASADO)
+        if (atual == StatusProjetoEnum.CONCLUIDO && novoStatus == StatusProjetoEnum.EM_ANDAMENTO) {
+            projeto.setTerminoRealizado(null);
+            StatusProjetoEnum statusApósRemocao = calcularStatus(projeto);
+            if (statusApósRemocao == StatusProjetoEnum.ATRASADO) {
+                throw new BusinessException("Remover Término Realizado levará o projeto a ATRASADO. Ajuste as datas previstas antes.");
+            }
+            return;
+        }
+
+        // Concluido -> Atrasado (permitir apenas se ao remover término, regras classificarem como ATRASADO)
+        if (atual == StatusProjetoEnum.CONCLUIDO && novoStatus == StatusProjetoEnum.ATRASADO) {
+            projeto.setTerminoRealizado(null);
+            StatusProjetoEnum statusApósRemocao = calcularStatus(projeto);
+            if (statusApósRemocao != StatusProjetoEnum.ATRASADO) {
+                throw new BusinessException("Para ir a ATRASADO a partir de CONCLUIDO, ao remover Término Realizado o status deve ficar ATRASADO; ajuste as datas.");
+            }
+            return;
+        }
     }
 
-    @Transactional
-    public void deletar(UUID id) {
-        projetoRepository.deleteById(id);
+    private void recalcularMetricasEStatus(ProjetoEntity projeto) {
+        StatusProjetoEnum statusCalculado = calcularStatus(projeto);
+        projeto.setStatus(statusCalculado);
+        projeto.setDiasAtraso(calcularDiasAtraso(projeto));
+        projeto.setPercentualTempoRestante(calcularPercentualTempoRestante(projeto));
     }
 
-    @Transactional
-    public Projeto transicionar(UUID id, ProjetoStatus para) {
-        Projeto p = projetoRepository.findById(id).orElseThrow(() -> new BusinessException("Projeto não encontrado"));
-
+    public StatusProjetoEnum calcularStatus(ProjetoEntity p) {
         LocalDate hoje = LocalDate.now();
-        ProjetoStatus de = p.getStatus();
 
-        switch (de) {
-            case A_INICIAR -> {
-                if (para == ProjetoStatus.EM_ANDAMENTO) {
-                    p.setInicioRealizado(hoje);
-                } else if (para == ProjetoStatus.ATRASADO) {
-                    if (p.getInicioPrevisto() != null && hoje.compareTo(p.getInicioPrevisto()) < 0) {
-                        throw new BusinessException("Não pode marcar ATRASADO antes do início previsto.");
-                    }
-                } else if (para == ProjetoStatus.CONCLUIDO) {
-                    p.setTerminoRealizado(hoje);
-                }
-            }
-            case EM_ANDAMENTO -> {
-                if (para == ProjetoStatus.A_INICIAR) {
-                    p.setInicioRealizado(null);
-                } else if (para == ProjetoStatus.ATRASADO) {
-                    throw new BusinessException(
-                            "Para marcar ATRASADO partindo de EM_ANDAMENTO, ajuste Início/Término Previsto para data < hoje ou remova Início Realizado.");
-                } else if (para == ProjetoStatus.CONCLUIDO) {
-                    p.setTerminoRealizado(hoje);
-                }
-            }
-            case ATRASADO -> {
-                if (para == ProjetoStatus.A_INICIAR) {
-                    throw new BusinessException(
-                            "Para voltar a A_INICIAR partindo de ATRASADO, remova Início Realizado e ajuste datas previstas para > hoje.");
-                } else if (para == ProjetoStatus.EM_ANDAMENTO) {
-                    throw new BusinessException(
-                            "Para ir a EM_ANDAMENTO partindo de ATRASADO, ajuste datas previstas para > hoje.");
-                } else if (para == ProjetoStatus.CONCLUIDO) {
-                    p.setTerminoRealizado(hoje);
-                }
-            }
-            case CONCLUIDO -> {
-                if (para == ProjetoStatus.A_INICIAR) {
-                    throw new BusinessException(
-                            "Para voltar a A_INICIAR partindo de CONCLUIDO, remova Término Realizado e ajuste datas previstas para > hoje.");
-                } else if (para == ProjetoStatus.EM_ANDAMENTO) {
-                    p.setTerminoRealizado(null);
-                    // Validar se não fica ATRASADO
-                } else if (para == ProjetoStatus.ATRASADO) {
-                    p.setTerminoRealizado(null);
-                }
-            }
+        if (p.getTerminoRealizado() != null) {
+            return StatusProjetoEnum.CONCLUIDO;
         }
 
-        aplicarRegrasCalculo(p);
-
-        // Se após aplicar efeitos, o status calculado não é o solicitado, bloquear
-        if (p.getStatus() != para) {
-            throw new BusinessException("Transição inválida com as datas atuais. Status calculado: " + p.getStatus() +
-                    ". Ajuste datas conforme regras e tente novamente.");
-        }
-
-        return projetoRepository.save(p);
-    }
-
-    private void aplicarRegrasCalculo(Projeto p) {
-        // Recalcular status por regras
-        p.setStatus(calcularStatus(p));
-        // Calcular métricas
-        p.setPercentualTempoRestante(calcularPercentualTempoRestante(p));
-        p.setDiasAtraso(calcularDiasAtraso(p));
-    }
-
-    private ProjetoStatus calcularStatus(Projeto p) {
-        LocalDate hoje = LocalDate.now();
-
-        boolean inicioRealizadoVazio = p.getInicioRealizado() == null;
+        boolean inicioRealizado = p.getInicioRealizado() != null;
+        boolean terminoPrevistoMaiorHoje = p.getTerminoPrevisto() != null && p.getTerminoPrevisto().toLocalDate().isAfter(hoje);
         boolean terminoRealizadoVazio = p.getTerminoRealizado() == null;
 
-        // Concluído
-        if (!terminoRealizadoVazio) {
-            return ProjetoStatus.CONCLUIDO;
+        if (inicioRealizado && terminoPrevistoMaiorHoje && terminoRealizadoVazio) {
+            return StatusProjetoEnum.EM_ANDAMENTO;
         }
 
-        // A iniciar
-        if (inicioRealizadoVazio && terminoRealizadoVazio) {
-            return ProjetoStatus.A_INICIAR;
+        boolean inicioPrevistoMenorHojeESemInicioRealizado = p.getInicioPrevisto() != null
+                && p.getInicioPrevisto().toLocalDate().isBefore(hoje)
+                && p.getInicioRealizado() == null;
+
+        boolean terminoPrevistoMenorHojeESemTerminoRealizado = p.getTerminoPrevisto() != null
+                && p.getTerminoPrevisto().toLocalDate().isBefore(hoje)
+                && p.getTerminoRealizado() == null;
+
+        if (inicioPrevistoMenorHojeESemInicioRealizado || terminoPrevistoMenorHojeESemTerminoRealizado) {
+            return StatusProjetoEnum.ATRASADO;
         }
 
-        // Em andamento
-        if (!inicioRealizadoVazio && terminoRealizadoVazio &&
-                (p.getTerminoPrevisto() == null || p.getTerminoPrevisto().isAfter(hoje)
-                        || p.getTerminoPrevisto().isEqual(hoje))) {
-            return ProjetoStatus.EM_ANDAMENTO;
+        if (p.getInicioRealizado() == null && p.getTerminoRealizado() == null) {
+            return StatusProjetoEnum.A_INICIAR;
         }
 
-        // Atrasado
-        boolean cond1 = p.getInicioPrevisto() != null && p.getInicioPrevisto().isBefore(hoje) && inicioRealizadoVazio;
-        boolean cond2 = p.getTerminoPrevisto() != null && p.getTerminoPrevisto().isBefore(hoje)
-                && terminoRealizadoVazio;
-        if (cond1 || cond2) {
-            return ProjetoStatus.ATRASADO;
-        }
-
-        // Default
-        return ProjetoStatus.A_INICIAR;
+        return p.getStatus() != null ? p.getStatus() : StatusProjetoEnum.A_INICIAR;
     }
 
-    private int calcularPercentualTempoRestante(Projeto p) {
-        LocalDate inicio = p.getInicioPrevisto();
-        LocalDate fim = p.getTerminoPrevisto();
-        LocalDate hoje = LocalDate.now();
-
-        if (inicio == null || fim == null)
+    public int calcularPercentualTempoRestante(ProjetoEntity p) {
+        if (p.getInicioPrevisto() == null || p.getTerminoPrevisto() == null) {
             return 0;
+        }
 
-        long total = ChronoUnit.DAYS.between(inicio, fim);
-        if (total <= 0)
+        long total = ChronoUnit.DAYS.between(p.getInicioPrevisto().toLocalDate(), p.getTerminoPrevisto().toLocalDate());
+        if (total <= 0) {
             return 0;
+        }
 
-        long usado = ChronoUnit.DAYS.between(inicio, hoje);
+        long usado = ChronoUnit.DAYS.between(p.getInicioPrevisto().toLocalDate(), LocalDate.now());
         long restante = total - usado;
-        long perc = Math.round((restante * 100.0) / total);
-        if (p.getStatus() == ProjetoStatus.CONCLUIDO)
+
+        if (p.getStatus() == StatusProjetoEnum.CONCLUIDO) {
             return 0;
-        if (hoje.isAfter(fim))
+        }
+        if (LocalDate.now().isAfter(p.getTerminoPrevisto().toLocalDate())) {
             return 0;
-        if (perc < 0)
-            return 0;
-        if (perc > 100)
-            return 100;
-        return (int) perc;
+        }
+
+        long percent = Math.max(0, (restante * 100) / total);
+        return (int) percent;
     }
 
-    private int calcularDiasAtraso(Projeto p) {
-        LocalDate fimPrev = p.getTerminoPrevisto();
-        LocalDate fimReal = p.getTerminoRealizado();
-        LocalDate hoje = LocalDate.now();
-
-        if (p.getStatus() == ProjetoStatus.CONCLUIDO)
+    public int calcularDiasAtraso(ProjetoEntity p) {
+        if (p.getStatus() == StatusProjetoEnum.CONCLUIDO) {
             return 0;
-        if (fimPrev != null && fimReal == null && fimPrev.isBefore(hoje)) {
-            return (int) ChronoUnit.DAYS.between(fimPrev, hoje);
+        }
+        if (p.getTerminoRealizado() == null && p.getTerminoPrevisto() != null
+                && p.getTerminoPrevisto().toLocalDate().isBefore(LocalDate.now())) {
+            long dias = ChronoUnit.DAYS.between(p.getTerminoPrevisto().toLocalDate(), LocalDate.now());
+            return (int) Math.max(0, dias);
         }
         return 0;
     }
 
-    // Indicadores
-    public Map<ProjetoStatus, Double> atrasoMedioPorStatus() {
-        Map<ProjetoStatus, List<Projeto>> by = projetoRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Projeto::getStatus));
-        Map<ProjetoStatus, Double> out = new EnumMap<>(ProjetoStatus.class);
-        for (var e : by.entrySet()) {
-            out.put(e.getKey(), e.getValue().stream().mapToInt(Projeto::getDiasAtraso).average().orElse(0));
+    private String mensagemInconsistenciaStatus(ProjetoEntity p, StatusProjetoEnum desejado) {
+        String base = "Transição inválida: status calculado='" + calcularStatus(p) + "' diferente do solicitado='" + desejado + "'. ";
+        switch (desejado) {
+            case EM_ANDAMENTO:
+                return base + "Dica: defina Início Realizado (hoje) e garanta Término Previsto > hoje.";
+            case ATRASADO:
+                return base + "Dica: verifique se Início Previsto < hoje sem Início Realizado, ou Término Previsto < hoje sem Término Realizado.";
+            case CONCLUIDO:
+                return base + "Dica: defina Término Realizado.";
+            case A_INICIAR:
+            default:
+                return base + "Dica: limpe Início/Término Realizados.";
         }
-        return out;
-    }
-
-    public Map<ProjetoStatus, Long> quantidadePorStatus() {
-        return projetoRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Projeto::getStatus, () -> new EnumMap<>(ProjetoStatus.class),
-                        Collectors.counting()));
     }
 }

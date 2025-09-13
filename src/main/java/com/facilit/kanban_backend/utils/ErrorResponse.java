@@ -1,4 +1,4 @@
-package com.facilit.kanban_backend.controller;
+package com.facilit.kanban_backend.utils;
 
 import java.time.Instant;
 import java.util.List;

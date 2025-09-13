@@ -1,6 +1,7 @@
-package com.facilit.kanban_backend.controller;
+package com.facilit.kanban_backend.web.advice;
 
 import com.facilit.kanban_backend.exception.BusinessException;
+import com.facilit.kanban_backend.utils.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;

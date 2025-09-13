@@ -2,6 +2,7 @@ package com.facilit.kanban_backend.domain.enums;
 
 
 import com.facilit.kanban_backend.exception.EmailEmUsoException;
+import com.facilit.kanban_backend.exception.UsuarioInvalido;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum ExceptionReasonEnum {
-    // LOGIN_INEXISTENTE(LoginSenhaException.class, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid login or password"),
+     LOGIN_INEXISTENTE(UsuarioInvalido.class, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid login or password"),
 //    LOGIN_JA_EXISTE_NA_BASE(LoginExistenteException.class, HttpStatus.CONFLICT, "Login already exists"),
      EMAIL_JA_EXISTE_NA_BASE(EmailEmUsoException.class, HttpStatus.CONFLICT, "Email already exists")
     // USUARIO_NAO_ENCONTRADO(UsuarioNaoEncontradoException.class, HttpStatus.BAD_REQUEST, "Usuário não encontrado"),
