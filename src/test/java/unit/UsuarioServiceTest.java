@@ -2,9 +2,11 @@ package unit;
 
 import com.facilit.kanban_backend.domain.entity.UsuarioEntity;
 import com.facilit.kanban_backend.exception.EmailEmUsoException;
+import com.facilit.kanban_backend.exception.UsuarioInvalido;
 import com.facilit.kanban_backend.repository.UsuarioRepository;
 import com.facilit.kanban_backend.service.UsuarioService;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,5 +40,25 @@ public class UsuarioServiceTest {
 
         Assert.assertThrows(EmailEmUsoException.class, () -> usuarioService.cadastrarUsuario(
                 criarCadastrarUsuarioRequestRepresentation()));
+    }
+
+    @Test
+    public void loginUsuario_sucess() throws EmailEmUsoException, UsuarioInvalido {
+        usuarioRepository.save(criarUsuarioEntity());
+
+        Mockito.when(usuarioRepository.findByEmailAndPassword(
+                criarLoginUsuarioRequestRepresentation().getEmail(),
+                criarLoginUsuarioRequestRepresentation().getPassword())
+        ).thenReturn(criarUsuarioEntity());
+
+        var response = usuarioService.loginUsuario(criarLoginUsuarioRequestRepresentation());
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    public void loginUsuario_error() throws EmailEmUsoException, UsuarioInvalido {
+        Assertions.assertThrows(UsuarioInvalido.class, () -> {
+            usuarioService.loginUsuario(criarLoginUsuarioRequestRepresentation());
+        });
     }
 }
