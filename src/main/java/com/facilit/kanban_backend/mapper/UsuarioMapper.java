@@ -1,17 +1,16 @@
 package com.facilit.kanban_backend.mapper;
 
+import com.baeldung.openapi.model.CadastrarUsuarioRequestRepresentation;
 import com.baeldung.openapi.model.UsuarioRepresentation;
 import com.facilit.kanban_backend.domain.entity.UsuarioEntity;
 
 public class UsuarioMapper {
 
-    public static UsuarioEntity usuarioMapper(UsuarioRepresentation pUsuarioRepresentation) {
+    public static UsuarioEntity usuarioMapper(CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation) {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
-
-        usuarioEntity.setId(pUsuarioRepresentation.getId());
-        usuarioEntity.setNome(pUsuarioRepresentation.getNome());
-        usuarioEntity.setEmail(pUsuarioRepresentation.getEmail());
-        usuarioEntity.setPassword(pUsuarioRepresentation.getPassword());
+        usuarioEntity.setNome(pCadastrarUsuarioRequestRepresentation.getNome());
+        usuarioEntity.setEmail(pCadastrarUsuarioRequestRepresentation.getEmail());
+        usuarioEntity.setPassword(pCadastrarUsuarioRequestRepresentation.getPassword());
 
         return  usuarioEntity;
     }

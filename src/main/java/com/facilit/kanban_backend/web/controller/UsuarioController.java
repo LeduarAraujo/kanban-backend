@@ -20,16 +20,17 @@ public class UsuarioController implements UsuarioApi {
      * POST /usuario : realiza o cadastro do usuario
      * realiza o cadastro do usuario para permitir o uso dos usuarios
      *
-     * @param usuarioRepresentation (required)
+     * @param pCadastrarUsuarioRequestRepresentation (required)
      * @return Successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Unauthorized (status code 401)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> cadastrarUsuario(UsuarioRepresentation usuarioRepresentation) {
+public ResponseEntity<SuccessMessageRepresentation> cadastrarUsuario(
+        CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation) {
         try {
-            return ResponseEntity.ok().body(usuarioService.cadastrarUsuario(usuarioRepresentation));
+            return ResponseEntity.ok().body(usuarioService.cadastrarUsuario(pCadastrarUsuarioRequestRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -39,16 +40,16 @@ public class UsuarioController implements UsuarioApi {
      * POST /usuario/login : Realiza o login do usuário
      * Realiza o login do usuário
      *
-     * @param loginUsuarioRequestRepresentation (required)
+     * @param pLoginUsuarioRequestRepresentation (required)
      * @return Successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Unauthorized (status code 401)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<LoginResponseRepresentation> loginUsuario(LoginUsuarioRequestRepresentation loginUsuarioRequestRepresentation) {
+    public ResponseEntity<LoginResponseRepresentation> loginUsuario(LoginUsuarioRequestRepresentation pLoginUsuarioRequestRepresentation) {
         try {
-            return ResponseEntity.ok().body(usuarioService.loginUsuario(loginUsuarioRequestRepresentation));
+            return ResponseEntity.ok().body(usuarioService.loginUsuario(pLoginUsuarioRequestRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
