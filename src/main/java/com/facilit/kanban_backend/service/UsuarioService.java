@@ -32,7 +32,6 @@ public class UsuarioService {
     }
 
     public LoginResponseRepresentation loginUsuario(LoginUsuarioRequestRepresentation pLoginUsuarioRequestRepresentation) throws UsuarioInvalido {
-        // Lógica de autenticação (exemplo simplificado)
         var usuarioOpt = usuarioRepository.findByEmailAndPassword(
                 pLoginUsuarioRequestRepresentation.getEmail(),
                 pLoginUsuarioRequestRepresentation.getPassword()
