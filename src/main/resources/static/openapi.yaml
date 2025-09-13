@@ -15,11 +15,13 @@ tags:
     description: Dados dos indicadores
   - name: Usuario
     description: Dados de cadastro do usuário
+  - name: Secretaria
+    description: Dados das secretarias
 
 paths:
   /projetos:
     get:
-      operationId: listarProcessos
+      operationId: listarProjetos
       tags:
         - Projeto
       summary: Lista todos os projetos
@@ -55,7 +57,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Projeto'
+              type: object
+              properties:
+                nome:
+                  type: string
+                status:
+                  type: string
+                  enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+                responsavelId:
+                  type: integer
+                  format: int64
+                dtInicioPrevisto:
+                  type: string
+                  format: date
+                dtTerminoPrevisto:
+                  type: string
+                  format: date
+                dtInicioRealizado:
+                  type: string
+                  format: date
+                dtTerminoRealizado:
+                  type: string
+                  format: date
         required: true
       responses:
         '200':
@@ -63,7 +86,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SucessMessage'
+                $ref: '#/components/schemas/Projeto'
         '400':
           description: Bad Request
           content:
@@ -140,7 +163,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Projeto'
+              type: object
+              properties:
+                nome:
+                  type: string
+                status:
+                  type: string
+                  enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+                responsavelId:
+                  type: integer
+                  format: int64
+                dtInicioPrevisto:
+                  type: string
+                  format: date
+                dtTerminoPrevisto:
+                  type: string
+                  format: date
+                dtInicioRealizado:
+                  type: string
+                  format: date
+                dtTerminoRealizado:
+                  type: string
+                  format: date
         required: true
       responses:
         '200':
@@ -185,6 +229,10 @@ paths:
       responses:
         '204':
           description: Projeto excluído com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SucessMessage'
         '404':
           description: Projeto não encontrado
           content:
@@ -210,7 +258,7 @@ paths:
           in: path
           required: true
           description: ID do projeto
-          schema:
+          schema: 
             type: integer
             format: int64
         - name: novoStatus
@@ -313,11 +361,13 @@ paths:
               schema:
                 type: array
                 items:
-                  type: array
-                  items:
-                    oneOf:
-                      - type: string
-                      - type: integer
+                  type: object
+                  properties:
+                    statusProjeto:
+                      type: string
+                      enum: [A_INICIAR, EM_ANDAMENTO, ATRASADO, CONCLUIDO]
+                    quantidade:
+                      type: integer
         '500':
           description: Internal Server Error
           content:
@@ -404,6 +454,329 @@ paths:
         - gerenciador:
             - write
             - read
+
+  /usuario/login:
+    post:
+      operationId: loginUsuario
+      tags:
+        - Usuario
+      summary: Realiza o login do usuário
+      description: 'Realiza o login do usuário'
+      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                  format: password
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token de autenticação
+                  nome:
+                    type: string
+                  email:
+                    type: string
+                  
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /secretaria:
+    get:
+      operationId: listarSecretarias
+      tags:
+        - Secretaria
+      summary: Lista todas as secretarias
+      description: ''
+      
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Secretaria'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+    post:
+      operationId: cadastrarSecretaria
+      tags:
+        - Secretaria
+      summary: Cadastra uma nova secretaria
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nmSecretaria:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SucessMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+    put:
+      operationId: atualizarSecretaria
+      tags:
+        - Secretaria
+      summary: Atualiza uma secretaria existente
+      description: ''
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID da secretaria a ser atualizada
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nmSecretaria:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SucessMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+    delete:
+      operationId: excluirSecretaria
+      tags:
+        - Secretaria
+      summary: Exclui uma secretaria existente
+      description: ''
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID da secretaria a ser excluída
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SucessMessage'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+
+  /secretaria/{id}:
+    get:
+      operationId: buscarSecretariaPorId
+      tags:
+        - Secretaria
+      summary: Busca uma secretaria pelo ID
+      description: ''
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID da secretaria a ser buscada
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Secretaria'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+
+  /responsavel:
+      get:
+        operationId: listarResponsaveis
+        tags:
+          - Responsavel
+        summary: Lista todos os responsáveis
+        description: ''
+        
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Responsavel'
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorMessage'
+          '401':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorMessage'
+          '500':
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorMessage'
+
+      post:
+        operationId: cadastrarResponsavel
+        tags:
+          - Responsavel
+        summary: Cadastra um novo responsável
+        description: ''
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nome:
+                    type: string
+
+
 
 
 components:

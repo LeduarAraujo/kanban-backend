@@ -2,6 +2,7 @@ package com.facilit.kanban_backend.service;
 
 import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
+import com.facilit.kanban_backend.dto.RespostaContagemProjetosPorStatusDTO;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,7 @@ public class ProjetoService {
         return projetoRepository.save(projeto);
     }
 
-    public List<Object[]> quantidadeProjetosPorStatus() {
+    public List<RespostaContagemProjetosPorStatusDTO> quantidadeProjetosPorStatus() {
         return projetoRepository.countProjetosByStatus();
     }
 

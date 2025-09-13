@@ -1,6 +1,7 @@
 package com.facilit.kanban_backend.web.controller;
 
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
+import com.facilit.kanban_backend.dto.RespostaContagemProjetosPorStatusDTO;
 import com.facilit.kanban_backend.service.ProjetoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,7 +27,7 @@ public class IndicadorController {
             @ApiResponse(responseCode = "200", description = "Indicadores retornados com sucesso")
     })
     @GetMapping("/projetos/quantidade-por-status")
-    public ResponseEntity<List<Object[]>> quantidadeProjetosPorStatus() {
+    public ResponseEntity<List<RespostaContagemProjetosPorStatusDTO>> quantidadeProjetosPorStatus() {
         return ResponseEntity.ok(projetoService.quantidadeProjetosPorStatus());
     }
 
