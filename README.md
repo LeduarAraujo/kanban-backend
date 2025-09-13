@@ -159,4 +159,4 @@ Os endpoints podem ser importados diretamente do Swagger:
 
 # 📋 Diagrama de entidades
 
-![img.png](img.png)
+![img_1.png](img_1.png)
