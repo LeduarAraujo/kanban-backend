@@ -1,5 +1,6 @@
 package fixtures;
 
+import com.baeldung.openapi.model.CadastrarUsuarioRequestRepresentation;
 import com.baeldung.openapi.model.UsuarioRepresentation;
 import com.facilit.kanban_backend.domain.entity.UsuarioEntity;
 
@@ -20,5 +21,12 @@ public class UsuarioFixtures {
         usuarioExistente.setPassword("$as7d6-da9#08sd");
 
         return usuarioExistente;
+    }
+
+    public static CadastrarUsuarioRequestRepresentation criarCadastrarUsuarioRequestRepresentation() {
+        return CadastrarUsuarioRequestRepresentation.builder()
+                .nome("Usuário Teste")
+                .email("teste@teste.com")
+                .build();
     }
 }
