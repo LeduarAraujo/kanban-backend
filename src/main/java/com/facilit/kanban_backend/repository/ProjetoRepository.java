@@ -19,15 +19,15 @@ public interface ProjetoRepository  extends JpaRepository<ProjetoEntity, Long> {
         SELECT 
             p.nome AS nomeProjeto,
             u.nome AS nomeResponsavel,
-            s.usuario.nome AS nomeSecretaria,
+            s.nmSecretaria AS nomeSecretaria,
             c.nome AS nomeCargo,
             p.status AS statusProjeto
-        FROM ProjetoEntity p
-        JOIN ProjetoResponsavelEntity pr ON pr.projeto = p
-        JOIN ResponsavelEntity r ON r = pr.responsavel
-        JOIN UsuarioEntity u ON u = r.usuario
-        JOIN SecretariaEntity s ON s = r.secretaria
-        JOIN CargoEntity c ON c = r.cargo
+        FROM ProjetoResponsavelEntity pr
+        JOIN pr.projeto p
+        JOIN pr.responsavel r
+        JOIN r.usuario u
+        JOIN r.secretaria s
+        JOIN r.cargo c
     """)
     List<ProjetoResponsavelDTO> buscarDetalhesDosProjetos();
 

@@ -1,8 +1,7 @@
 package com.facilit.kanban_backend.web.controller;
 
 import com.baeldung.openapi.api.UsuarioApi;
-import com.baeldung.openapi.model.SucessMessageRepresentation;
-import com.baeldung.openapi.model.UsuarioRepresentation;
+import com.baeldung.openapi.model.*;
 
 import com.facilit.kanban_backend.service.UsuarioService;
 import com.facilit.kanban_backend.utils.ErrorFormat;
@@ -28,9 +27,28 @@ public class UsuarioController implements UsuarioApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SucessMessageRepresentation> cadastrarUsuario(UsuarioRepresentation usuarioRepresentation) {
+    public ResponseEntity<SuccessMessageRepresentation> cadastrarUsuario(UsuarioRepresentation usuarioRepresentation) {
         try {
             return ResponseEntity.ok().body(usuarioService.cadastrarUsuario(usuarioRepresentation));
+        } catch (Exception ex) {
+            return (ResponseEntity) ErrorFormat.convertToEntity(ex);
+        }
+    }
+
+    /**
+     * POST /usuario/login : Realiza o login do usuário
+     * Realiza o login do usuário
+     *
+     * @param loginUsuarioRequestRepresentation (required)
+     * @return Successful operation (status code 200)
+     * or Bad Request (status code 400)
+     * or Unauthorized (status code 401)
+     * or Internal Server Error (status code 500)
+     */
+    @Override
+    public ResponseEntity<LoginResponseRepresentation> loginUsuario(LoginUsuarioRequestRepresentation loginUsuarioRequestRepresentation) {
+        try {
+            return ResponseEntity.ok().body(usuarioService.loginUsuario(loginUsuarioRequestRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }

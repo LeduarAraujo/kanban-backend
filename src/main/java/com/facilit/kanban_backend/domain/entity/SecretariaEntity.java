@@ -12,7 +12,6 @@ public class SecretariaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    UsuarioEntity usuario;
+    @Column(name = "nmSecretaria")
+    String nmSecretaria;
 }
