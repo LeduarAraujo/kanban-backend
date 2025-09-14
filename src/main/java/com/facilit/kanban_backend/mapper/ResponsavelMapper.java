@@ -13,7 +13,8 @@ public class ResponsavelMapper {
 
         ResponsavelRepresentation responsavelRepresentation = new ResponsavelRepresentation();
         responsavelRepresentation.setId(pResponsavelEntity.getId());
-//        responsavelRepresentation.setUsuarioId(pResponsavelEntity.getUsuario().getId());
+        responsavelRepresentation.setNome(pResponsavelEntity.getUsuario().getNome());
+        responsavelRepresentation.setEmail(pResponsavelEntity.getUsuario().getEmail());
         responsavelRepresentation.setSecretariaId(pResponsavelEntity.getSecretaria().getId());
         responsavelRepresentation.setCargoId(pResponsavelEntity.getCargo().getId());
 
