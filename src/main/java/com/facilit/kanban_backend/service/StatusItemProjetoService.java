@@ -1,6 +1,5 @@
 package com.facilit.kanban_backend.service;
 
-import com.facilit.kanban_backend.domain.entity.StatusItemProjetoEntity;
 import com.facilit.kanban_backend.repository.StatusItemProjetoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

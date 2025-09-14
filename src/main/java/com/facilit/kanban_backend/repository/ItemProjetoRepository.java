@@ -2,7 +2,6 @@ package com.facilit.kanban_backend.repository;
 
 import com.facilit.kanban_backend.domain.entity.ItemProjetoEntity;
 import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
-import com.facilit.kanban_backend.domain.entity.StatusItemProjetoEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -949,6 +949,13 @@ paths:
         - ItemProjeto
       summary: Listar todos os itens de projeto
       description: Lista todos os itens de projeto
+      parameters:
+        - name: idItemProjeto
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: successful operation
@@ -1253,6 +1260,9 @@ components:
     ItemProjetoResponse:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         projeto_id:
           type: integer
           format: int64
@@ -1285,7 +1295,7 @@ components:
 
     StatusItemProjeto:
       type: string
-      enum: [ EM_ANALISE, A_FAZER, EM_PROGRESSO, EM_TESTE, EM_REVISÃO, CONCLUIDO ]
+      enum: [ EM_ANALISE, A_FAZER, EM_PROGRESSO, EM_TESTE, EM_REVISAO, CONCLUIDO ]
 
     LoginResponse:
       type: object

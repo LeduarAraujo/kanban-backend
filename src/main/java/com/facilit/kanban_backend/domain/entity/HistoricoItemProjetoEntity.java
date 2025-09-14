@@ -1,6 +1,7 @@
 package com.facilit.kanban_backend.domain.entity;
 
 import com.facilit.kanban_backend.domain.enums.PrioridadeEnum;
+import com.facilit.kanban_backend.domain.enums.StatusItemProjetoEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,7 +30,7 @@ public class HistoricoItemProjetoEntity {
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
-    private StatusItemProjetoEntity status;
+    private StatusItemProjetoEnum status;
 
     @Enumerated(EnumType.STRING)
     private PrioridadeEnum prioridade;
