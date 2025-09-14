@@ -37,16 +37,17 @@ public class ProjetoService {
         projeto.setTerminoPrevisto(pCadastrarProjetoRequestRepresentation.getDtTerminoPrevisto());
         projeto.setInicioRealizado(pCadastrarProjetoRequestRepresentation.getDtInicioRealizado());
         projeto.setTerminoRealizado(pCadastrarProjetoRequestRepresentation.getDtTerminoRealizado());
-        projetoRepository.save(projeto);
+        final ProjetoEntity saveResponse = projetoRepository.save(projeto);
 
         pCadastrarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
             ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
-            projetoResponsavel.setProjeto(projeto);
+
+            projetoResponsavel.setProjeto(saveResponse);
             projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId.getId()).get());
             projetoResponsavelRepository.save(projetoResponsavel);
         });
 
-        return ProjetoMapper.toRepresentation(projeto);
+        return ProjetoMapper.toRepresentation(saveResponse);
     }
 
     public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
@@ -81,19 +82,20 @@ public class ProjetoService {
         projeto.setTerminoRealizado(pAtualizarProjetoRequestRepresentation.getDtTerminoRealizado());
         projeto.setPercentualTempoRestante(pAtualizarProjetoRequestRepresentation.getPercentualTempoRestante());
         projeto.setDiasAtraso(pAtualizarProjetoRequestRepresentation.getDiasAtraso());
+        final ProjetoEntity saveResponse = projetoRepository.save(projeto);
 
         List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
         projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
 
         pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
             ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
-            projetoResponsavel.setProjeto(projeto);
+            projetoResponsavel.setProjeto(saveResponse);
             projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId).get());
             projetoResponsavelRepository.save(projetoResponsavel);
         });
 
-        recalcularMetricasEStatus(projeto);
-        return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
+        recalcularMetricasEStatus(saveResponse);
+        return ProjetoMapper.toRepresentation(saveResponse);
     }
 
     public ProjetoRepresentation buscarProjetoPorId(Long id) {
