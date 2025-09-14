@@ -7,7 +7,6 @@ import com.facilit.kanban_backend.domain.entity.SecretariaEntity;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.repository.SecretariaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +25,7 @@ public class SecretariaService {
         if (secretariaEntity.isPresent()) {
             SecretariaEntity secretariaToUpdate = secretariaEntity.get();
             secretariaToUpdate.setNmSecretaria(pCadastrarSecretariaRequestRepresentation.getNmSecretaria());
+            secretariaToUpdate.setDescricao(pCadastrarSecretariaRequestRepresentation.getDescricao());
             secretariaRepository.save(secretariaToUpdate);
 
             return SuccessMessageRepresentation.builder().build();
@@ -42,6 +42,7 @@ public class SecretariaService {
             SecretariaRepresentation secretariaRepresentation = new SecretariaRepresentation();
             secretariaRepresentation.setId(secretaria.getId());
             secretariaRepresentation.setNmSecretaria(secretaria.getNmSecretaria());
+            secretariaRepresentation.setDescricao(secretaria.getDescricao());
             return secretariaRepresentation;
         } else {
             throw new BusinessException("Secretaria not found with id: " + pIdSecretaria);
@@ -51,6 +52,7 @@ public class SecretariaService {
     public SuccessMessageRepresentation cadastrarSecretaria(CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
         SecretariaEntity novaSecretaria = new SecretariaEntity();
         novaSecretaria.setNmSecretaria(pCadastrarSecretariaRequestRepresentation.getNmSecretaria());
+        novaSecretaria.setDescricao(pCadastrarSecretariaRequestRepresentation.getDescricao());
         secretariaRepository.save(novaSecretaria);
 
         return SuccessMessageRepresentation.builder()
@@ -79,6 +81,7 @@ public class SecretariaService {
             SecretariaRepresentation representation = new SecretariaRepresentation();
             representation.setId(secretaria.getId());
             representation.setNmSecretaria(secretaria.getNmSecretaria());
+            representation.setDescricao(secretaria.getDescricao());
             return representation;
         }).toList();
     }

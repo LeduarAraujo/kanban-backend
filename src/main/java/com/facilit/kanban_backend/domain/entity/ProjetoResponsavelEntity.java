@@ -6,10 +6,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "PROJETO_RESPONSAVEL")
+@Table(name = "projeto_responsavel")
 public class ProjetoResponsavelEntity {
-    @EmbeddedId
-    private ProjetoResponsavelIdEmbed id;
 
     @ManyToOne
     @MapsId("projetoId")

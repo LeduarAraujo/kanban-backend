@@ -81,6 +81,8 @@ paths:
               properties:
                 nome:
                   type: string
+                descricao:
+                  type: string
                 status:
                   $ref: '#/components/schemas/StatusProjeto'
                 responsavelId:
@@ -190,6 +192,8 @@ paths:
               type: object
               properties:
                 nome:
+                  type: string
+                descricao:
                   type: string
                 status:
                   $ref: '#/components/schemas/StatusProjeto'
@@ -400,6 +404,7 @@ paths:
                       $ref: '#/components/schemas/StatusProjeto'
                     quantidade:
                       type: integer
+                      format: int64
         '500':
           description: Internal Server Error
           content:
@@ -461,7 +466,7 @@ paths:
                 email:
                   type: string
                   format: email
-                password:
+                senha:
                   type: string
                   format: password
                   minLength: 6
@@ -513,7 +518,7 @@ paths:
                 email:
                   type: string
                   format: email
-                password:
+                senha:
                   type: string
                   format: password
                   minLength: 6
@@ -593,6 +598,8 @@ paths:
               type: object
               properties:
                 nmSecretaria:
+                  type: string
+                descricao:
                   type: string
         required: true
       responses:
@@ -689,6 +696,8 @@ paths:
               type: object
               properties:
                 nmSecretaria:
+                  type: string
+                descricao:
                   type: string
         required: true
       responses:
@@ -965,6 +974,8 @@ components:
           format: int64
         nome:
           type: string
+        descricao:
+          type: string
         status:
           $ref: '#/components/schemas/StatusProjeto'
         responsavelId:
@@ -999,7 +1010,7 @@ components:
         email:
           type: string
           format: email
-        password:
+        senha:
           type: string
           format: password
           minLength: 6
@@ -1042,6 +1053,8 @@ components:
           type: integer
           format: int64
         nmSecretaria:
+          type: string
+        descricao:
           type: string
 
     CadastroResponsavelBody:

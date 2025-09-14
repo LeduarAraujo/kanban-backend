@@ -15,6 +15,7 @@ public class ProjetoMapper {
 
         representation.setId(pProjetoEntity.getId());
         representation.setNome(pProjetoEntity.getNome());
+        representation.setDescricao(pProjetoEntity.getDescricao());
         representation.setStatus(StatusProjetoRepresentation.valueOf(pProjetoEntity.getStatus().toString()));
         representation.setDtInicioPrevisto(pProjetoEntity.getInicioPrevisto());
         representation.setDtTerminoPrevisto(pProjetoEntity.getTerminoPrevisto());

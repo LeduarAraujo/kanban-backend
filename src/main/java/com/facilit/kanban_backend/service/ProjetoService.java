@@ -4,7 +4,6 @@ import com.baeldung.openapi.model.*;
 import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
 import com.facilit.kanban_backend.domain.entity.ProjetoResponsavelEntity;
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
-import com.facilit.kanban_backend.dto.RespostaContagemProjetosPorStatusDTO;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.mapper.ProjetoMapper;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +31,7 @@ public class ProjetoService {
     public ProjetoRepresentation cadastrarProjeto (CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
         ProjetoEntity projeto = new ProjetoEntity();
         projeto.setNome(pCadastrarProjetoRequestRepresentation.getNome());
+        projeto.setDescricao(pCadastrarProjetoRequestRepresentation.getDescricao());
         projeto.setStatus(StatusProjetoEnum.valueOf(pCadastrarProjetoRequestRepresentation.getStatus().toString()));
         projeto.setInicioPrevisto(pCadastrarProjetoRequestRepresentation.getDtInicioPrevisto());
         projeto.setTerminoPrevisto(pCadastrarProjetoRequestRepresentation.getDtTerminoPrevisto());
@@ -72,6 +73,7 @@ public class ProjetoService {
         ProjetoEntity projeto = projetoEntity.get();
 
         projeto.setNome(pAtualizarProjetoRequestRepresentation.getNome());
+        projeto.setDescricao(pAtualizarProjetoRequestRepresentation.getDescricao());
         projeto.setStatus(StatusProjetoEnum.valueOf(pAtualizarProjetoRequestRepresentation.getStatus().toString()));
         projeto.setInicioPrevisto(pAtualizarProjetoRequestRepresentation.getDtInicioPrevisto());
         projeto.setTerminoPrevisto(pAtualizarProjetoRequestRepresentation.getDtTerminoPrevisto());
@@ -149,12 +151,21 @@ public class ProjetoService {
         return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
     }
 
-    public List<RespostaContagemProjetosPorStatusDTO> quantidadeProjetosPorStatus() {
-        return projetoRepository.countProjetosByStatus();
+    public List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> quantidadeProjetosPorStatus() {
+        List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> retorno = new ArrayList<>();
+
+        projetoRepository.countProjetosByStatus().stream().forEach(projeto -> {
+            retorno.add(QuantidadeProjetosPorStatus200ResponseInnerRepresentation.builder()
+                    .statusProjeto(StatusProjetoRepresentation.fromValue(projeto.getStatusProjeto().toString()))
+                    .quantidade(projeto.getQuantidade())
+                    .build());
+        });
+
+        return retorno;
     }
 
-    public Double mediaDiasAtrasoPorStatus(StatusProjetoEnum status) {
-        return projetoRepository.avgDiasAtrasoByStatus(status);
+    public Double mediaDiasAtrasoPorStatus(StatusProjetoRepresentation pStatusProjetoRepresentation) {
+        return projetoRepository.avgDiasAtrasoByStatus(StatusProjetoEnum.valueOf(pStatusProjetoRepresentation.toString()));
     }
 
     private void aplicarAcoesAutomaticasDeTransicao(ProjetoEntity projeto, StatusProjetoEnum novoStatus) {

@@ -32,9 +32,9 @@ public class UsuarioService {
     }
 
     public LoginResponseRepresentation loginUsuario(LoginUsuarioRequestRepresentation pLoginUsuarioRequestRepresentation) throws UsuarioInvalido {
-        var usuarioOpt = usuarioRepository.findByEmailAndPassword(
+        var usuarioOpt = usuarioRepository.findByEmailAndSenha(
                 pLoginUsuarioRequestRepresentation.getEmail(),
-                pLoginUsuarioRequestRepresentation.getPassword()
+                pLoginUsuarioRequestRepresentation.getSenha()
         );
 
         if (usuarioOpt != null) {

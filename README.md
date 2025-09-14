@@ -39,9 +39,10 @@ docker compose up --build
 ```
 
 ### 🚀 Documentação / Contratos
-- Swagger UI: `http://localhost:8080/swagger-ui`
-- API Docs: `http://localhost:8080/v3/api-docs`
-- H2 Console: `http://localhost:8080/h2-console`
+- Swagger UI: [http://localhost:8080/swagger-ui](http://localhost:8080/swagger-ui)
+- API Docs: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+- H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+
 
 ### Executar Localmente (sem Docker)
 Requisitos: **Java 17**, **Maven**, **H2** (configurar credenciais no `application.yml`).

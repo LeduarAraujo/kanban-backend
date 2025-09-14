@@ -10,7 +10,7 @@ public class UsuarioMapper {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
         usuarioEntity.setNome(pCadastrarUsuarioRequestRepresentation.getNome());
         usuarioEntity.setEmail(pCadastrarUsuarioRequestRepresentation.getEmail());
-        usuarioEntity.setPassword(pCadastrarUsuarioRequestRepresentation.getPassword());
+        usuarioEntity.setSenha(pCadastrarUsuarioRequestRepresentation.getSenha());
 
         return  usuarioEntity;
     }

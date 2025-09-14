@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "PROJETO")
+@Table(name = "projeto")
 @EntityListeners(AuditingEntityListener.class)
 public class ProjetoEntity {
 
@@ -21,6 +21,8 @@ public class ProjetoEntity {
     private Long id;
 
     private String nome;
+
+    private String descricao;
 
     @Enumerated(EnumType.STRING)
     private StatusProjetoEnum status;
