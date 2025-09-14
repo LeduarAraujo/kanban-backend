@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "USUARIO")
+@Table(name = "usuario")
 @EntityListeners(AuditingEntityListener.class)
 public class UsuarioEntity {
 
@@ -25,8 +25,8 @@ public class UsuarioEntity {
     @Column( name = "email", unique = true)
     String email;
 
-    @Column( name = "password")
-    String password;
+    @Column( name = "senha")
+    String senha;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "RESPONSAVEL")
+@Table(name = "responsavel")
 @EntityListeners(AuditingEntityListener.class)
 public class ResponsavelEntity {
 

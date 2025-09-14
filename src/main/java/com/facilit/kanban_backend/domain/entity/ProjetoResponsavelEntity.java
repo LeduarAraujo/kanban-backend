@@ -3,14 +3,11 @@ package com.facilit.kanban_backend.domain.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "PROJETO_RESPONSAVEL")
+@Table(name = "projeto_responsavel")
 public class ProjetoResponsavelEntity {
-    @EmbeddedId
-    private ProjetoResponsavelIdEmbed id;
 
     @ManyToOne
     @MapsId("projetoId")
@@ -21,10 +18,4 @@ public class ProjetoResponsavelEntity {
     @MapsId("responsavelId")
     @JoinColumn(name = "responsavel_id")
     private ResponsavelEntity responsavel;
-
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "SECRETARIA")
+@Table(name = "secretaria")
 public class SecretariaEntity {
 
     @Id
@@ -14,4 +14,7 @@ public class SecretariaEntity {
 
     @Column(name = "nmSecretaria")
     String nmSecretaria;
+
+    @Column(name = "descricao")
+    String descricao;
 }

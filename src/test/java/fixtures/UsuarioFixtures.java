@@ -11,7 +11,7 @@ public class UsuarioFixtures {
         return UsuarioRepresentation.builder()
                 .nome("Usuário Teste")
                 .email("teste@teste.com")
-                .password("$as7d6-da9#08sd")
+                .senha("$as7d6-da9#08sd")
                 .build();
     }
 
@@ -19,7 +19,7 @@ public class UsuarioFixtures {
         UsuarioEntity usuarioExistente = new UsuarioEntity();
         usuarioExistente.setNome("Usuário Existente");
         usuarioExistente.setEmail("teste@teste.com");
-        usuarioExistente.setPassword("$as7d6-da9#08sd");
+        usuarioExistente.setSenha("$as7d6-da9#08sd");
 
         return usuarioExistente;
     }
@@ -28,14 +28,14 @@ public class UsuarioFixtures {
         return CadastrarUsuarioRequestRepresentation.builder()
                 .nome("Usuário Teste")
                 .email("teste@teste.com")
-                .password("$as7d6-da9#08sd")
+                .senha("$as7d6-da9#08sd")
                 .build();
     }
 
     public static LoginUsuarioRequestRepresentation criarLoginUsuarioRequestRepresentation() {
         return LoginUsuarioRequestRepresentation.builder()
                 .email("teste@teste.com")
-                .password("$as7d6-da9#08sd")
+                .senha("$as7d6-da9#08sd")
                 .build();
     }
 }
