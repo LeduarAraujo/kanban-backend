@@ -6,6 +6,7 @@ import com.facilit.kanban_backend.domain.entity.ResponsavelEntity;
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.mapper.ProjetoMapper;
+import com.facilit.kanban_backend.repository.ItemProjetoRepository;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
 import com.facilit.kanban_backend.repository.ResponsavelRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,20 +25,21 @@ public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
     private final ResponsavelRepository responsavelRepository;
+    private final ItemProjetoRepository itemProjetoRepository;
 
-    public ProjetoRepresentation cadastrarProjeto(CadastrarProjetoRequestRepresentation request) {
+    public ProjetoRepresentation cadastrarProjeto(CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
         ProjetoEntity projeto = new ProjetoEntity();
 
-        projeto.setNome(request.getNome());
-        projeto.setDescricao(request.getDescricao());
-        projeto.setStatus(StatusProjetoEnum.valueOf(request.getStatus().toString()));
-        projeto.setInicioPrevisto(request.getDtInicioPrevisto());
-        projeto.setTerminoPrevisto(request.getDtTerminoPrevisto());
-        projeto.setInicioRealizado(request.getDtInicioRealizado());
-        projeto.setTerminoRealizado(request.getDtTerminoRealizado());
+        projeto.setNome(pCadastrarProjetoRequestRepresentation.getNome());
+        projeto.setDescricao(pCadastrarProjetoRequestRepresentation.getDescricao());
+        projeto.setStatus(StatusProjetoEnum.valueOf(pCadastrarProjetoRequestRepresentation.getStatus().toString()));
+        projeto.setInicioPrevisto(pCadastrarProjetoRequestRepresentation.getDtInicioPrevisto());
+        projeto.setTerminoPrevisto(pCadastrarProjetoRequestRepresentation.getDtTerminoPrevisto());
+        projeto.setInicioRealizado(pCadastrarProjetoRequestRepresentation.getDtInicioRealizado());
+        projeto.setTerminoRealizado(pCadastrarProjetoRequestRepresentation.getDtTerminoRealizado());
 
         // 🔹 Buscar os responsáveis a partir da lista de objetos que contêm o id
-        Set<ResponsavelEntity> responsaveis = request.getResponsavelId().stream()
+        Set<ResponsavelEntity> responsaveis = pCadastrarProjetoRequestRepresentation.getResponsavelId().stream()
                 .map(inner -> responsavelRepository.findById(inner.getId())
                         .orElseThrow(() -> new RuntimeException("Responsável não encontrado: " + inner.getId())))
                 .collect(Collectors.toSet());
@@ -54,11 +53,17 @@ public class ProjetoService {
     }
 
     public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
-        // Necessário excluir os responsáveis associados ao projeto antes de excluir o projeto
-//        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
-//        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
+        // Necessário buscar os itens do projeto para fazer uma limpeza em cascata.
+        itemProjetoRepository.deleteAll(itemProjetoRepository.findByProjetoId(pIdProjeto));
 
+        // Necessário excluir os responsáveis associados ao projeto antes de excluir o projeto
+        ProjetoEntity projeto = projetoRepository.findById(pIdProjeto)
+                .orElseThrow(() -> new RuntimeException("Projeto não encontrado: " + pIdProjeto));
+
+        projeto.getResponsaveis().clear();
+        projetoRepository.save(projeto);
         projetoRepository.deleteById(pIdProjeto);
+
         return SuccessMessageRepresentation.builder()
                 .message("O projeto foi excluido com sucesso!")
                 .code(0)
@@ -85,18 +90,17 @@ public class ProjetoService {
         projeto.setTerminoRealizado(pAtualizarProjetoRequestRepresentation.getDtTerminoRealizado());
         projeto.setPercentualTempoRestante(pAtualizarProjetoRequestRepresentation.getPercentualTempoRestante());
         projeto.setDiasAtraso(pAtualizarProjetoRequestRepresentation.getDiasAtraso());
+
+        projeto.getResponsaveis().clear();
+
+        // 🔹 Buscar os responsáveis a partir da lista de objetos que contêm o id
+        Set<ResponsavelEntity> responsaveis = new HashSet<>();
+        pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
+            responsaveis.add(responsavelRepository.findById(responsavelId).get());
+        });
+        projeto.setResponsaveis(responsaveis);
+
         final ProjetoEntity saveResponse = projetoRepository.save(projeto);
-
-//        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
-//        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
-
-//        pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
-//            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
-//            projetoResponsavel.setProjeto(saveResponse);
-//            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId).get());
-//            projetoResponsavelRepository.save(projetoResponsavel);
-//        });
-
         recalcularMetricasEStatus(saveResponse);
         return ProjetoMapper.toRepresentation(saveResponse);
     }

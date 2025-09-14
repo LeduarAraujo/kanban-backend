@@ -7,9 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ItemProjetoRepository extends JpaRepository<ItemProjetoEntity, Long> {
     Page<ItemProjetoEntity> findByProjeto(ProjetoEntity projeto, Pageable pageable);
     Page<ItemProjetoEntity> findByStatus(StatusItemProjetoEntity status, Pageable pageable);
+    List<ItemProjetoEntity> findByProjetoId(Long projetoId);
 }
 
 
