@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,22 +26,22 @@ public class ProjetoEntity {
     private StatusProjetoEnum status;
 
     @Column(name = "inicio_previsto")
-    private LocalDateTime inicioPrevisto;
+    private LocalDate inicioPrevisto;
 
     @Column(name = "termino_previsto")
-    private LocalDateTime terminoPrevisto;
+    private LocalDate terminoPrevisto;
 
     @Column(name = "inicio_realizado")
-    private LocalDateTime inicioRealizado;
+    private LocalDate inicioRealizado;
 
     @Column(name = "termino_realizado")
-    private LocalDateTime terminoRealizado;
+    private LocalDate terminoRealizado;
 
     @Column(name = "dias_atraso")
     private Integer diasAtraso;
 
     @Column(name = "percentual_tempo_restante")
-    private Integer percentualTempoRestante;
+    private Float percentualTempoRestante;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

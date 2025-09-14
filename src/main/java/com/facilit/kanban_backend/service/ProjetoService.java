@@ -1,55 +1,157 @@
 package com.facilit.kanban_backend.service;
 
+import com.baeldung.openapi.model.*;
 import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
+import com.facilit.kanban_backend.domain.entity.ProjetoResponsavelEntity;
+import com.facilit.kanban_backend.domain.entity.ResponsavelEntity;
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
 import com.facilit.kanban_backend.dto.RespostaContagemProjetosPorStatusDTO;
 import com.facilit.kanban_backend.exception.BusinessException;
+import com.facilit.kanban_backend.mapper.ProjetoMapper;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
+import com.facilit.kanban_backend.repository.ProjetoResponsavelRepository;
+import com.facilit.kanban_backend.repository.ResponsavelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
+    private final ProjetoResponsavelRepository projetoResponsavelRepository;
+    private final ResponsavelRepository responsavelRepository;
 
-    public ProjetoEntity salvar(ProjetoEntity projeto) {
-        recalcularMetricasEStatus(projeto);
-        return projetoRepository.save(projeto);
+    public ProjetoRepresentation cadastrarProjeto (CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
+        ProjetoEntity projeto = new ProjetoEntity();
+        projeto.setNome(pCadastrarProjetoRequestRepresentation.getNome());
+        projeto.setStatus(StatusProjetoEnum.valueOf(pCadastrarProjetoRequestRepresentation.getStatus().toString()));
+        projeto.setInicioPrevisto(pCadastrarProjetoRequestRepresentation.getDtInicioPrevisto());
+        projeto.setTerminoPrevisto(pCadastrarProjetoRequestRepresentation.getDtTerminoPrevisto());
+        projeto.setInicioRealizado(pCadastrarProjetoRequestRepresentation.getDtInicioRealizado());
+        projeto.setTerminoRealizado(pCadastrarProjetoRequestRepresentation.getDtTerminoRealizado());
+        projetoRepository.save(projeto);
+
+        pCadastrarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
+            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
+            projetoResponsavel.setProjeto(projeto);
+            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId.getId()).get());
+            projetoResponsavelRepository.save(projetoResponsavel);
+        });
+
+        return ProjetoMapper.toRepresentation(projeto);
     }
 
-    public ProjetoEntity buscarOuFalhar(Long id) {
-        return projetoRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Projeto não encontrado"));
+    public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
+        // Necessário excluir os responsáveis associados ao projeto antes de excluir o projeto
+        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
+        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
+
+        projetoRepository.deleteById(pIdProjeto);
+        return SuccessMessageRepresentation.builder()
+                .message("O projeto foi excluido com sucesso!")
+                .code(0)
+                .build();
     }
 
-    public Page<ProjetoEntity> listar(Pageable pageable) {
-        return projetoRepository.findAll(pageable);
-    }
+    public ProjetoRepresentation atualizarProjeto(Long pIdProjeto
+            , AtualizarProjetoRequestRepresentation pAtualizarProjetoRequestRepresentation) {
 
-    public Page<ProjetoEntity> listarPorStatus(StatusProjetoEnum status, Pageable pageable) {
-        return projetoRepository.findByStatus(status, pageable);
-    }
+        Optional<ProjetoEntity> projetoEntity = projetoRepository.findById(pIdProjeto);
 
-    public ProjetoEntity moverStatus(Long id, StatusProjetoEnum novoStatus) {
-        ProjetoEntity projeto = buscarOuFalhar(id);
-
-        aplicarAcoesAutomaticasDeTransicao(projeto, novoStatus);
-        recalcularMetricasEStatus(projeto);
-
-        if (projeto.getStatus() != novoStatus) {
-            throw new BusinessException(mensagemInconsistenciaStatus(projeto, novoStatus));
+        if (projetoEntity.isEmpty()) {
+            throw new BusinessException("Projeto não encontrado");
         }
 
-        return projetoRepository.save(projeto);
+        ProjetoEntity projeto = projetoEntity.get();
+
+        projeto.setNome(pAtualizarProjetoRequestRepresentation.getNome());
+        projeto.setStatus(StatusProjetoEnum.valueOf(pAtualizarProjetoRequestRepresentation.getStatus().toString()));
+        projeto.setInicioPrevisto(pAtualizarProjetoRequestRepresentation.getDtInicioPrevisto());
+        projeto.setTerminoPrevisto(pAtualizarProjetoRequestRepresentation.getDtTerminoPrevisto());
+        projeto.setInicioRealizado(pAtualizarProjetoRequestRepresentation.getDtInicioRealizado());
+        projeto.setTerminoRealizado(pAtualizarProjetoRequestRepresentation.getDtTerminoRealizado());
+        projeto.setPercentualTempoRestante(pAtualizarProjetoRequestRepresentation.getPercentualTempoRestante());
+        projeto.setDiasAtraso(pAtualizarProjetoRequestRepresentation.getDiasAtraso());
+
+        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
+        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
+
+        pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
+            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
+            projetoResponsavel.setProjeto(projeto);
+            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId).get());
+            projetoResponsavelRepository.save(projetoResponsavel);
+        });
+
+        recalcularMetricasEStatus(projeto);
+        return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
+    }
+
+    public ProjetoRepresentation buscarProjetoPorId(Long id) {
+        return ProjetoMapper.toRepresentation(
+                projetoRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("Projeto não encontrado")));
+    }
+
+    public ListaProjetoResponseRepresentation listarProjetos(Pageable pPageable) {
+        Page<ProjetoEntity> retorno = projetoRepository.findAll(pPageable);
+
+        return ListaProjetoResponseRepresentation.builder()
+                .content(retorno.map(ProjetoMapper::toRepresentation).getContent())
+                .pageable(ListaProjetoResponsePageableRepresentation.builder()
+                        .pageNumber(retorno.getNumber())
+                        .pageSize(retorno.getTotalPages())
+                        .offset((int) retorno.getPageable().getOffset()).build())
+                .totalElements( (int) retorno.getTotalElements())
+                .totalPages(retorno.getTotalPages())
+                .last(retorno.isLast())
+                .first(retorno.isFirst())
+                .numberOfElements(retorno.getNumberOfElements())
+                .size(retorno.getSize())
+                .build();
+    }
+
+    public ListaProjetoResponseRepresentation listarProjetosPorStatus(StatusProjetoRepresentation status, Pageable pPageable) {
+        Page<ProjetoEntity> retorno = projetoRepository.findByStatus(StatusProjetoEnum.valueOf(status.toString()), pPageable);
+
+        return ListaProjetoResponseRepresentation.builder()
+                .content(retorno.map(ProjetoMapper::toRepresentation).getContent())
+                .pageable(ListaProjetoResponsePageableRepresentation.builder()
+                        .pageNumber(retorno.getNumber())
+                        .pageSize(retorno.getTotalPages())
+                        .offset((int) retorno.getPageable().getOffset()).build())
+                .totalElements( (int) retorno.getTotalElements())
+                .totalPages(retorno.getTotalPages())
+                .last(retorno.isLast())
+                .first(retorno.isFirst())
+                .numberOfElements(retorno.getNumberOfElements())
+                .size(retorno.getSize())
+                .build();
+    }
+
+    public ProjetoRepresentation moverStatus(Long pIdProjeto, StatusProjetoRepresentation novoStatus) {
+        ProjetoEntity projeto = projetoRepository.findById(pIdProjeto).get();
+
+        aplicarAcoesAutomaticasDeTransicao(projeto, StatusProjetoEnum.valueOf(novoStatus.toString()));
+        recalcularMetricasEStatus(projeto);
+
+        if (projeto.getStatus() != StatusProjetoEnum.valueOf(novoStatus.toString())) {
+            throw new BusinessException(mensagemInconsistenciaStatus(projeto, StatusProjetoEnum.valueOf(novoStatus.toString())));
+        }
+
+        return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
     }
 
     public List<RespostaContagemProjetosPorStatusDTO> quantidadeProjetosPorStatus() {
@@ -62,7 +164,7 @@ public class ProjetoService {
 
     private void aplicarAcoesAutomaticasDeTransicao(ProjetoEntity projeto, StatusProjetoEnum novoStatus) {
         StatusProjetoEnum atual = projeto.getStatus();
-        LocalDateTime agora = LocalDateTime.now();
+        LocalDate agora = LocalDate.now();
 
         // A iniciar -> Em andamento
         if (atual == StatusProjetoEnum.A_INICIAR && novoStatus == StatusProjetoEnum.EM_ANDAMENTO) {
@@ -82,7 +184,7 @@ public class ProjetoService {
         // A iniciar -> Atrasado
         if (atual == StatusProjetoEnum.A_INICIAR && novoStatus == StatusProjetoEnum.ATRASADO) {
             LocalDate hoje = LocalDate.now();
-            if (projeto.getInicioPrevisto() != null && projeto.getInicioPrevisto().toLocalDate().isAfter(hoje)) {
+            if (projeto.getInicioPrevisto() != null && projeto.getInicioPrevisto().isAfter(hoje)) {
                 throw new BusinessException("Não é permitido mover para ATRASADO antes do Início Previsto. Ajuste as datas.");
             }
             // sem ação automática; recálculo determinará se realmente é atrasado
@@ -157,7 +259,7 @@ public class ProjetoService {
         }
 
         boolean inicioRealizado = p.getInicioRealizado() != null;
-        boolean terminoPrevistoMaiorHoje = p.getTerminoPrevisto() != null && p.getTerminoPrevisto().toLocalDate().isAfter(hoje);
+        boolean terminoPrevistoMaiorHoje = p.getTerminoPrevisto() != null && p.getTerminoPrevisto().isAfter(hoje);
         boolean terminoRealizadoVazio = p.getTerminoRealizado() == null;
 
         if (inicioRealizado && terminoPrevistoMaiorHoje && terminoRealizadoVazio) {
@@ -165,11 +267,11 @@ public class ProjetoService {
         }
 
         boolean inicioPrevistoMenorHojeESemInicioRealizado = p.getInicioPrevisto() != null
-                && p.getInicioPrevisto().toLocalDate().isBefore(hoje)
+                && p.getInicioPrevisto().isBefore(hoje)
                 && p.getInicioRealizado() == null;
 
         boolean terminoPrevistoMenorHojeESemTerminoRealizado = p.getTerminoPrevisto() != null
-                && p.getTerminoPrevisto().toLocalDate().isBefore(hoje)
+                && p.getTerminoPrevisto().isBefore(hoje)
                 && p.getTerminoRealizado() == null;
 
         if (inicioPrevistoMenorHojeESemInicioRealizado || terminoPrevistoMenorHojeESemTerminoRealizado) {
@@ -183,28 +285,27 @@ public class ProjetoService {
         return p.getStatus() != null ? p.getStatus() : StatusProjetoEnum.A_INICIAR;
     }
 
-    public int calcularPercentualTempoRestante(ProjetoEntity p) {
+    public Float calcularPercentualTempoRestante(ProjetoEntity p) {
         if (p.getInicioPrevisto() == null || p.getTerminoPrevisto() == null) {
-            return 0;
+            return 0.0f;
         }
 
-        long total = ChronoUnit.DAYS.between(p.getInicioPrevisto().toLocalDate(), p.getTerminoPrevisto().toLocalDate());
+        long total = ChronoUnit.DAYS.between(p.getInicioPrevisto(), p.getTerminoPrevisto());
         if (total <= 0) {
-            return 0;
+            return 0.0f;
         }
 
-        long usado = ChronoUnit.DAYS.between(p.getInicioPrevisto().toLocalDate(), LocalDate.now());
+        long usado = ChronoUnit.DAYS.between(p.getInicioPrevisto(), LocalDate.now());
         long restante = total - usado;
 
         if (p.getStatus() == StatusProjetoEnum.CONCLUIDO) {
-            return 0;
+            return 0.0f;
         }
-        if (LocalDate.now().isAfter(p.getTerminoPrevisto().toLocalDate())) {
-            return 0;
+        if (LocalDate.now().isAfter(p.getTerminoPrevisto())) {
+            return 0.0f;
         }
 
-        long percent = Math.max(0, (restante * 100) / total);
-        return (int) percent;
+        return  Math.max(0.0f, Float.parseFloat(String.valueOf((restante * 100) / total)));
     }
 
     public int calcularDiasAtraso(ProjetoEntity p) {
@@ -212,8 +313,8 @@ public class ProjetoService {
             return 0;
         }
         if (p.getTerminoRealizado() == null && p.getTerminoPrevisto() != null
-                && p.getTerminoPrevisto().toLocalDate().isBefore(LocalDate.now())) {
-            long dias = ChronoUnit.DAYS.between(p.getTerminoPrevisto().toLocalDate(), LocalDate.now());
+                && p.getTerminoPrevisto().isBefore(LocalDate.now())) {
+            long dias = ChronoUnit.DAYS.between(p.getTerminoPrevisto(), LocalDate.now());
             return (int) Math.max(0, dias);
         }
         return 0;
