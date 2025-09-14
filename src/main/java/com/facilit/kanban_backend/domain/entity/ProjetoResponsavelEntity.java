@@ -9,6 +9,9 @@ import lombok.Data;
 @Table(name = "projeto_responsavel")
 public class ProjetoResponsavelEntity {
 
+    @EmbeddedId
+    private ProjetoResponsavelIdEmbed id;
+
     @ManyToOne
     @MapsId("projetoId")
     @JoinColumn(name = "projeto_id")
