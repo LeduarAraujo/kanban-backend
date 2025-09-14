@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProjetoRepository  extends JpaRepository<ProjetoEntity, Long> {
@@ -40,4 +41,6 @@ public interface ProjetoRepository  extends JpaRepository<ProjetoEntity, Long> {
 
     @Query("SELECT AVG(p.diasAtraso) FROM ProjetoEntity p WHERE p.status = :status")
     Double avgDiasAtrasoByStatus(@Param("status") StatusProjetoEnum status);
+
+    Optional<List<ProjetoEntity>> findByResponsavelId(Long responsavelId);
 }
