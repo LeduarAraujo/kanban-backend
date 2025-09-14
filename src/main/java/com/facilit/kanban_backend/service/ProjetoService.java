@@ -2,12 +2,11 @@ package com.facilit.kanban_backend.service;
 
 import com.baeldung.openapi.model.*;
 import com.facilit.kanban_backend.domain.entity.ProjetoEntity;
-import com.facilit.kanban_backend.domain.entity.ProjetoResponsavelEntity;
+import com.facilit.kanban_backend.domain.entity.ResponsavelEntity;
 import com.facilit.kanban_backend.domain.enums.StatusProjetoEnum;
 import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.mapper.ProjetoMapper;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
-import com.facilit.kanban_backend.repository.ProjetoResponsavelRepository;
 import com.facilit.kanban_backend.repository.ResponsavelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,41 +18,45 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProjetoService {
 
     private final ProjetoRepository projetoRepository;
-    private final ProjetoResponsavelRepository projetoResponsavelRepository;
     private final ResponsavelRepository responsavelRepository;
 
-    public ProjetoRepresentation cadastrarProjeto (CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
+    public ProjetoRepresentation cadastrarProjeto(CadastrarProjetoRequestRepresentation request) {
         ProjetoEntity projeto = new ProjetoEntity();
-        projeto.setNome(pCadastrarProjetoRequestRepresentation.getNome());
-        projeto.setDescricao(pCadastrarProjetoRequestRepresentation.getDescricao());
-        projeto.setStatus(StatusProjetoEnum.valueOf(pCadastrarProjetoRequestRepresentation.getStatus().toString()));
-        projeto.setInicioPrevisto(pCadastrarProjetoRequestRepresentation.getDtInicioPrevisto());
-        projeto.setTerminoPrevisto(pCadastrarProjetoRequestRepresentation.getDtTerminoPrevisto());
-        projeto.setInicioRealizado(pCadastrarProjetoRequestRepresentation.getDtInicioRealizado());
-        projeto.setTerminoRealizado(pCadastrarProjetoRequestRepresentation.getDtTerminoRealizado());
-        final ProjetoEntity saveResponse = projetoRepository.save(projeto);
 
-        pCadastrarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
-            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
+        projeto.setNome(request.getNome());
+        projeto.setDescricao(request.getDescricao());
+        projeto.setStatus(StatusProjetoEnum.valueOf(request.getStatus().toString()));
+        projeto.setInicioPrevisto(request.getDtInicioPrevisto());
+        projeto.setTerminoPrevisto(request.getDtTerminoPrevisto());
+        projeto.setInicioRealizado(request.getDtInicioRealizado());
+        projeto.setTerminoRealizado(request.getDtTerminoRealizado());
 
-            projetoResponsavel.setProjeto(saveResponse);
-            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId.getId()).get());
-            projetoResponsavelRepository.save(projetoResponsavel);
-        });
+        // 🔹 Buscar os responsáveis a partir da lista de objetos que contêm o id
+        Set<ResponsavelEntity> responsaveis = request.getResponsavelId().stream()
+                .map(inner -> responsavelRepository.findById(inner.getId())
+                        .orElseThrow(() -> new RuntimeException("Responsável não encontrado: " + inner.getId())))
+                .collect(Collectors.toSet());
+
+        projeto.setResponsaveis(responsaveis);
+
+        // 🔹 Salvar projeto (JPA cuida da tabela de junção automaticamente)
+        ProjetoEntity saveResponse = projetoRepository.save(projeto);
 
         return ProjetoMapper.toRepresentation(saveResponse);
     }
 
     public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
         // Necessário excluir os responsáveis associados ao projeto antes de excluir o projeto
-        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
-        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
+//        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
+//        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
 
         projetoRepository.deleteById(pIdProjeto);
         return SuccessMessageRepresentation.builder()
@@ -84,15 +87,15 @@ public class ProjetoService {
         projeto.setDiasAtraso(pAtualizarProjetoRequestRepresentation.getDiasAtraso());
         final ProjetoEntity saveResponse = projetoRepository.save(projeto);
 
-        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
-        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
+//        List<ProjetoResponsavelEntity> listaProjetosResponsaveis = projetoResponsavelRepository.findByProjetoId(pIdProjeto);
+//        projetoResponsavelRepository.deleteAll(listaProjetosResponsaveis);
 
-        pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
-            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
-            projetoResponsavel.setProjeto(saveResponse);
-            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId).get());
-            projetoResponsavelRepository.save(projetoResponsavel);
-        });
+//        pAtualizarProjetoRequestRepresentation.getResponsavelId().stream().forEach(responsavelId -> {
+//            ProjetoResponsavelEntity projetoResponsavel = new ProjetoResponsavelEntity();
+//            projetoResponsavel.setProjeto(saveResponse);
+//            projetoResponsavel.setResponsavel(responsavelRepository.findById(responsavelId).get());
+//            projetoResponsavelRepository.save(projetoResponsavel);
+//        });
 
         recalcularMetricasEStatus(saveResponse);
         return ProjetoMapper.toRepresentation(saveResponse);

@@ -7,6 +7,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -37,4 +39,7 @@ public class ResponsavelEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     LocalDateTime updatedAt;
+
+    @ManyToMany(mappedBy = "responsaveis")
+    private Set<ProjetoEntity> projetos = new HashSet<>();
 }

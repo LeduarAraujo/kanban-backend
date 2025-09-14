@@ -18,21 +18,21 @@ import java.util.Optional;
 @Repository
 public interface ProjetoRepository  extends JpaRepository<ProjetoEntity, Long> {
 
-    @Query("""
-        SELECT 
-            p.nome AS nomeProjeto,
-            u.nome AS nomeResponsavel,
-            s.nmSecretaria AS nomeSecretaria,
-            c.nome AS nomeCargo,
-            p.status AS statusProjeto
-        FROM ProjetoResponsavelEntity pr
-        JOIN pr.projeto p
-        JOIN pr.responsavel r
-        JOIN r.usuario u
-        JOIN r.secretaria s
-        JOIN r.cargo c
-    """)
-    List<ProjetoResponsavelDTO> buscarDetalhesDosProjetos();
+//    @Query("""
+//        SELECT
+//            p.nome AS nomeProjeto,
+//            u.nome AS nomeResponsavel,
+//            s.nmSecretaria AS nomeSecretaria,
+//            c.nome AS nomeCargo,
+//            p.status AS statusProjeto
+//        FROM ProjetoResponsavelEntity pr
+//        JOIN pr.projeto p
+//        JOIN pr.responsavel r
+//        JOIN r.usuario u
+//        JOIN r.secretaria s
+//        JOIN r.cargo c
+//    """)
+//    List<ProjetoResponsavelDTO> buscarDetalhesDosProjetos();
 
     Page<ProjetoEntity> findByStatus(StatusProjetoEnum status, Pageable pageable);
 
@@ -42,5 +42,5 @@ public interface ProjetoRepository  extends JpaRepository<ProjetoEntity, Long> {
     @Query("SELECT AVG(p.diasAtraso) FROM ProjetoEntity p WHERE p.status = :status")
     Double avgDiasAtrasoByStatus(@Param("status") StatusProjetoEnum status);
 
-    Optional<List<ProjetoEntity>> findByResponsavelId(Long responsavelId);
+    List<ProjetoEntity> findByResponsaveisId(Long responsavelId);
 }

@@ -47,7 +47,7 @@ public class ResponsavelService {
 
     public SuccessMessageRepresentation excluirResponsavel(Long pIdResponsavel) {
         // Verifica se o responsável está associado a algum projeto
-        if (projetoRepository.findByResponsavelId(pIdResponsavel).isPresent()) {
+        if (projetoRepository.findByResponsaveisId(pIdResponsavel).size() > 0) {
             throw new IllegalArgumentException("Não é possível excluir o responsável, pois ele está associado a projetos.");
         }
 
