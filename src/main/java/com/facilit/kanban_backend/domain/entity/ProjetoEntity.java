@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -23,6 +25,14 @@ public class ProjetoEntity {
     private String nome;
 
     private String descricao;
+
+    @ManyToMany
+    @JoinTable(
+            name = "projeto_responsavel", // tabela de junção
+            joinColumns = @JoinColumn(name = "projeto_id"), // chave estrangeira desta entidade
+            inverseJoinColumns = @JoinColumn(name = "responsavel_id") // chave estrangeira da outra entidade
+    )
+    private Set<ResponsavelEntity> responsaveis = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private StatusProjetoEnum status;

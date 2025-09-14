@@ -4,7 +4,7 @@ import com.facilit.kanban_backend.exception.EmailEmUsoException;
 import com.facilit.kanban_backend.exception.UsuarioInvalido;
 import com.facilit.kanban_backend.service.UsuarioService;
 import com.facilit.kanban_backend.web.controller.UsuarioController;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +31,7 @@ public class UsuarioControllerTest {
         ResponseEntity resposta = usuarioController.cadastrarUsuario(
                 criarCadastrarUsuarioRequestRepresentation());
 
-        Assert.assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        Assertions.assertEquals(HttpStatus.OK, resposta.getStatusCode());
     }
 
     @Test
@@ -39,19 +39,19 @@ public class UsuarioControllerTest {
         // Simula que o e-mail já está em uso
         Mockito.when(usuarioService.cadastrarUsuario(Mockito.any())).thenThrow(EmailEmUsoException.class);
         ResponseEntity resposta = usuarioController.cadastrarUsuario(criarCadastrarUsuarioRequestRepresentation());
-        Assert.assertEquals(HttpStatus.CONFLICT, resposta.getStatusCode());
+        Assertions.assertEquals(HttpStatus.CONFLICT, resposta.getStatusCode());
     }
 
     @Test
     public void loginUsuario_sucess() throws EmailEmUsoException, UsuarioInvalido {
         var resposta = usuarioController.loginUsuario(criarLoginUsuarioRequestRepresentation());
-        Assert.assertEquals(HttpStatus.OK, resposta.getStatusCode());
+        Assertions.assertEquals(HttpStatus.OK, resposta.getStatusCode());
     }
 
     @Test
     public void loginUsuario_error() throws EmailEmUsoException, UsuarioInvalido {
         Mockito.when(usuarioService.loginUsuario(Mockito.any())).thenThrow(UsuarioInvalido.class);
         ResponseEntity resposta = usuarioController.loginUsuario(criarLoginUsuarioRequestRepresentation());
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, resposta.getStatusCode());
+        Assertions.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, resposta.getStatusCode());
     }
 }

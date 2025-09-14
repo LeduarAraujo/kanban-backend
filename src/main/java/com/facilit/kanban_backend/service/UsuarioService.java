@@ -1,6 +1,7 @@
 package com.facilit.kanban_backend.service;
 
 import com.baeldung.openapi.model.*;
+import com.facilit.kanban_backend.domain.entity.UsuarioEntity;
 import com.facilit.kanban_backend.exception.EmailEmUsoException;
 import com.facilit.kanban_backend.exception.UsuarioInvalido;
 import com.facilit.kanban_backend.mapper.UsuarioMapper;
@@ -19,16 +20,23 @@ public class UsuarioService {
     public SuccessMessageRepresentation cadastrarUsuario(CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation)
             throws EmailEmUsoException {
 
-        if (!usuarioRepository.findByEmail(pCadastrarUsuarioRequestRepresentation.getEmail()).isEmpty()) {
-            throw new EmailEmUsoException();
-        }
+        this.cadastroUsuarioRetornoEntity(pCadastrarUsuarioRequestRepresentation);
 
-        usuarioRepository.save(UsuarioMapper.usuarioMapper(pCadastrarUsuarioRequestRepresentation));
         return SuccessMessageRepresentation.builder()
                 .message("O usuário " + pCadastrarUsuarioRequestRepresentation.getNome()
                         + " foi cadastrado com sucesso!")
                 .code(0)
                 .build();
+    }
+
+    public UsuarioEntity cadastroUsuarioRetornoEntity(CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation)
+            throws EmailEmUsoException {
+
+        if (!usuarioRepository.findByEmail(pCadastrarUsuarioRequestRepresentation.getEmail()).isEmpty()) {
+            throw new EmailEmUsoException();
+        }
+
+        return usuarioRepository.save(UsuarioMapper.usuarioMapper(pCadastrarUsuarioRequestRepresentation));
     }
 
     public LoginResponseRepresentation loginUsuario(LoginUsuarioRequestRepresentation pLoginUsuarioRequestRepresentation) throws UsuarioInvalido {

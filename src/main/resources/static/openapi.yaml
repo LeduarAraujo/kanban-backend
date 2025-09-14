@@ -773,16 +773,33 @@ paths:
         - Responsavel
       summary: Lista todos os responsáveis
       description: ''
-
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            example: id,asc
+            default: id
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Responsavel'
+                $ref: '#/components/schemas/ListaResponsavelResponse'
         '400':
           description: Bad Request
           content:
@@ -864,9 +881,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Responsavel'
+                $ref: '#/components/schemas/Responsavel'
         '400':
           description: Bad Request
           content:
@@ -1023,6 +1038,42 @@ components:
           format: int64
         nmCargo:
           type: string
+
+    ListaResponsavelResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Responsavel'
+        pageable:
+          type: object
+          properties:
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            offset:
+              type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        sort:
+          type: string
+          default: id
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        empty:
+          type: boolean
 
     Responsavel:
       type: object
