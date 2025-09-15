@@ -16,7 +16,7 @@ public class HistoricoItemProjetoMapper {
         historicoItemProjetoEntity.setStatus(pItemProjetoEntity.getStatus());
         historicoItemProjetoEntity.setPrioridade(pItemProjetoEntity.getPrioridade());
         historicoItemProjetoEntity.setProjeto(pItemProjetoEntity.getProjeto().getId());
-        historicoItemProjetoEntity.setResponsavel(pItemProjetoEntity.getResponsavel().stream()
+        historicoItemProjetoEntity.setResponsavel(pItemProjetoEntity.getResponsaveis().stream()
                 .map(responsavelEntity -> String.valueOf(responsavelEntity.getId()))
                 .collect(Collectors.joining(";")));
 

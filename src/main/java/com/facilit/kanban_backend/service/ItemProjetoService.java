@@ -64,7 +64,7 @@ public class ItemProjetoService {
             listResponsavel.add(responsavelEntity);
         });
 
-        itemProjetoEntity.setResponsavel(listResponsavel);
+        itemProjetoEntity.setResponsaveis(listResponsavel);
 
         return null;
     }

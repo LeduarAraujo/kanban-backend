@@ -29,7 +29,7 @@ public class ItemProjetoMapper {
 
         List<CadastrarProjetoRequestResponsavelIdInnerRepresentation> listResponsavel = new ArrayList<>();
 
-        pItemProjetoEntity.getResponsavel().stream().forEach(responsavel -> {
+        pItemProjetoEntity.getResponsaveis().stream().forEach(responsavel -> {
             listResponsavel.add(
                     CadastrarProjetoRequestResponsavelIdInnerRepresentation.builder()
                             .id(responsavel.getId())
@@ -70,7 +70,7 @@ public class ItemProjetoMapper {
         itemProjetoEntity.setDescricao(pItemProjetoResponseRepresentation.getDescricao());
         itemProjetoEntity.setStatus(StatusItemProjetoEnum.valueOf(pItemProjetoResponseRepresentation.getStatusItem().toString()));
         itemProjetoEntity.setPrioridade(PrioridadeEnum.valueOf(pItemProjetoResponseRepresentation.getPrioridade().toString()));
-        itemProjetoEntity.setResponsavel(listResponsavel);
+        itemProjetoEntity.setResponsaveis(listResponsavel);
         itemProjetoEntity.setProjeto(projetoEntity);
 
         return itemProjetoEntity;
