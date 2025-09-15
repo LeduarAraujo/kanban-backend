@@ -1,6 +1,7 @@
 package com.facilit.kanban_backend.domain.entity;
 
 import com.facilit.kanban_backend.domain.enums.PrioridadeEnum;
+import com.facilit.kanban_backend.domain.enums.StatusItemProjetoEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,21 +16,18 @@ public class HistoricoItemProjetoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "projeto_id", nullable = false)
-    private ProjetoEntity projeto;
+    @Column( name = "projeto_id" )
+    private Long projeto;
 
     private String titulo;
 
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "responsavel_id", nullable = false)
-    private ResponsavelEntity responsavel;
+    @Column( name = "responsavel_id" )
+    private String responsavel;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private StatusItemProjetoEntity status;
+    @Enumerated(EnumType.STRING)
+    private StatusItemProjetoEnum status;
 
     @Enumerated(EnumType.STRING)
     private PrioridadeEnum prioridade;

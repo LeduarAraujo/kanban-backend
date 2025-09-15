@@ -1,10 +1,13 @@
 package com.facilit.kanban_backend.domain.entity;
 
 import com.facilit.kanban_backend.domain.enums.PrioridadeEnum;
+import com.facilit.kanban_backend.domain.enums.StatusItemProjetoEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -23,13 +26,16 @@ public class ItemProjetoEntity {
 
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "responsavel_id", nullable = false)
-    private ResponsavelEntity responsavel;
+    @ManyToMany
+    @JoinTable(
+            name = "item_projeto_responsavel", // tabela de junção
+            joinColumns = @JoinColumn(name = "item_projeto_id"), // chave estrangeira desta entidade
+            inverseJoinColumns = @JoinColumn(name = "responsavel_id") // chave estrangeira da outra entidade
+    )
+    private Set<ResponsavelEntity> responsaveis = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
-    private StatusItemProjetoEntity status;
+    @Enumerated(EnumType.STRING)
+    private StatusItemProjetoEnum status;
 
     @Enumerated(EnumType.STRING)
     private PrioridadeEnum prioridade;

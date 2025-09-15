@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -26,6 +27,7 @@ public class ResponsavelService {
     private final ProjetoRepository projetoRepository;
     private final SecretariaRepository secretariaRepository;
     private final CargoRepository cargoRepository;
+
 
     public ListaResponsavelResponseRepresentation listarResponsaveis(Pageable pPageable) {
         Page<ResponsavelEntity> retornoConsulta = responsavelRepository.findAll(pPageable);
@@ -45,6 +47,7 @@ public class ResponsavelService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation excluirResponsavel(Long pIdResponsavel) {
         // Verifica se o responsável está associado a algum projeto
         if (projetoRepository.findByResponsaveisId(pIdResponsavel).size() > 0) {
@@ -57,6 +60,7 @@ public class ResponsavelService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ResponsavelRepresentation cadastrarResponsavel(CadastroResponsavelBodyRepresentation pCadastroResponsavelBodyRepresentation) throws EmailEmUsoException {
         ResponsavelEntity responsavelEntity = new ResponsavelEntity();
         UsuarioEntity usuario = UsuarioMapper.toEntity(pCadastroResponsavelBodyRepresentation.getUsuario());
@@ -77,6 +81,7 @@ public class ResponsavelService {
         return ResponsavelMapper.toRepresentation(responsavelRepository.save(responsavelEntity));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ResponsavelRepresentation atualizarResponsavelPorId(Long pIdResponsavel
             , AtualizarResponsavelBodyRepresentation pAtualizarResponsavelBodyRepresentation) {
         ResponsavelEntity responsavelEntity = responsavelRepository.findById(pIdResponsavel)

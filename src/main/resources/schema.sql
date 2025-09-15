@@ -63,14 +63,19 @@ CREATE TABLE item_projeto (
     projeto_id BIGINT NOT NULL,
     titulo VARCHAR(100) NOT NULL,
     descricao TEXT,
-    responsavel_id BIGINT NOT NULL,
-    status_id BIGINT NOT NULL,
+    status_item ENUM( 'EM_ANALISE', 'A_FAZER', 'EM_PROGRESSO', 'EM_TESTE', 'EM_REVISÃO', 'CONCLUIDO' ) NOT NULL,
     prioridade ENUM('BAIXA', 'MEDIA', 'ALTA') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (projeto_id) REFERENCES projeto(id),
-    FOREIGN KEY (status_id) REFERENCES status_item_projeto(id),
-    FOREIGN KEY (responsavel_id) REFERENCES responsavel(id)
+    FOREIGN KEY (projeto_id) REFERENCES projeto(id)
+);
+
+CREATE TABLE item_projeto_responsavel (
+    item_projeto_id BIGINT NOT NULL,
+    responsavel_id BIGINT NOT NULL,
+    FOREIGN KEY (item_projeto_id) REFERENCES item_projeto(id),
+    FOREIGN KEY (responsavel_id) REFERENCES responsavel(id),
+    PRIMARY KEY (item_projeto_id, responsavel_id)
 );
 
 CREATE TABLE historico_item_projeto (
@@ -78,12 +83,9 @@ CREATE TABLE historico_item_projeto (
     projeto_id BIGINT NOT NULL,
     titulo VARCHAR(100) NOT NULL,
     descricao TEXT,
-    responsavel_id BIGINT NOT NULL,
-    status_id BIGINT NOT NULL,
+    responsavel_id VARCHAR(10) NOT NULL,
+    status_item ENUM( 'EM_ANALISE', 'A_FAZER', 'EM_PROGRESSO', 'EM_TESTE', 'EM_REVISÃO', 'CONCLUIDO' ) NOT NULL,
     prioridade ENUM('BAIXA', 'MEDIA', 'ALTA') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (projeto_id) REFERENCES projeto(id),
-    FOREIGN KEY (status_id) REFERENCES status_item_projeto(id),
-    FOREIGN KEY (responsavel_id) REFERENCES responsavel(id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
