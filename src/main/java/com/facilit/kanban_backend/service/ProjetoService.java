@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +28,7 @@ public class ProjetoService {
     private final ResponsavelRepository responsavelRepository;
     private final ItemProjetoRepository itemProjetoRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public ProjetoRepresentation cadastrarProjeto(CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
         ProjetoEntity projeto = new ProjetoEntity();
 
@@ -52,6 +54,7 @@ public class ProjetoService {
         return ProjetoMapper.toRepresentation(saveResponse);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
         // Necessário buscar os itens do projeto para fazer uma limpeza em cascata.
         itemProjetoRepository.deleteAll(itemProjetoRepository.findByProjetoId(pIdProjeto));
@@ -70,6 +73,7 @@ public class ProjetoService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ProjetoRepresentation atualizarProjeto(Long pIdProjeto
             , AtualizarProjetoRequestRepresentation pAtualizarProjetoRequestRepresentation) {
 
@@ -147,6 +151,7 @@ public class ProjetoService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public ProjetoRepresentation moverStatus(Long pIdProjeto, StatusProjetoRepresentation novoStatus) {
         ProjetoEntity projeto = projetoRepository.findById(pIdProjeto).get();
 

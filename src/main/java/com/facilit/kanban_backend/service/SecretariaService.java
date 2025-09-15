@@ -8,6 +8,7 @@ import com.facilit.kanban_backend.exception.BusinessException;
 import com.facilit.kanban_backend.repository.SecretariaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class SecretariaService {
 
     private final SecretariaRepository secretariaRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation atualizarSecretariaPorId(Long pIdSecretaria
             , CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
         Optional<SecretariaEntity> secretariaEntity= secretariaRepository.findById(pIdSecretaria);
@@ -49,6 +51,7 @@ public class SecretariaService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation cadastrarSecretaria(CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
         SecretariaEntity novaSecretaria = new SecretariaEntity();
         novaSecretaria.setNmSecretaria(pCadastrarSecretariaRequestRepresentation.getNmSecretaria());
@@ -61,6 +64,7 @@ public class SecretariaService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation excluirSecretaria(Long id) {
         Optional<SecretariaEntity> secretariaEntity = secretariaRepository.findById(id);
 

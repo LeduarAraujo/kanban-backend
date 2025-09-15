@@ -1056,7 +1056,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ItemProjetoResponse'
+                $ref: '#/components/schemas/SuccessMessage'
         '400':
           description: Bad Request
           content:

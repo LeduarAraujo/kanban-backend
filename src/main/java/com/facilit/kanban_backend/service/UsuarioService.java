@@ -9,6 +9,7 @@ import com.facilit.kanban_backend.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -17,6 +18,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public SuccessMessageRepresentation cadastrarUsuario(CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation)
             throws EmailEmUsoException {
 
@@ -29,6 +31,7 @@ public class UsuarioService {
                 .build();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public UsuarioEntity cadastroUsuarioRetornoEntity(CadastrarUsuarioRequestRepresentation pCadastrarUsuarioRequestRepresentation)
             throws EmailEmUsoException {
 
