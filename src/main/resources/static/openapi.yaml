@@ -49,12 +49,12 @@ paths:
             example: nome,asc
             default: id
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -87,12 +87,12 @@ paths:
       description: Realiza o cadastro de Projetos
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -176,12 +176,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -221,12 +221,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -311,12 +311,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -363,12 +363,12 @@ paths:
           schema:
             $ref: '#/components/schemas/StatusProjeto'
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -432,12 +432,12 @@ paths:
             type: string
             default: id
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -471,12 +471,12 @@ paths:
       description: Retorna a quantidade de projetos agrupados por status
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -518,12 +518,12 @@ paths:
           schema:
             $ref: '#/components/schemas/StatusProjeto'
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -660,12 +660,12 @@ paths:
       description: ''
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -706,12 +706,12 @@ paths:
       description: ''
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -770,12 +770,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -826,12 +826,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -887,12 +887,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -952,12 +952,12 @@ paths:
             example: id,asc
             default: id
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -995,12 +995,12 @@ paths:
       description: ''
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1051,12 +1051,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1107,12 +1107,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1158,12 +1158,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1197,12 +1197,12 @@ paths:
       description: Inclui um novo item de projeto
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1239,12 +1239,12 @@ paths:
       description: Atualiza um item de projeto existente
       parameters:
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer
@@ -1287,12 +1287,12 @@ paths:
             type: integer
             format: int64
         - name: acess_token
-          in: query
+          in: header
           required: true
           schema:
             type: string
         - name: idUsuarioLogado
-          in: query
+          in: header
           required: true
           schema:
             type: integer

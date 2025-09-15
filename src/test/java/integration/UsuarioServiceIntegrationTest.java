@@ -19,7 +19,7 @@ import static fixtures.UsuarioFixtures.*;
 @SpringBootTest(classes = KanbanBackendApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Transactional
-public class UsuarioServiceTest {
+public class UsuarioServiceIntegrationTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;

@@ -1,21 +1,56 @@
 {
   "info": {
-    "name": "Kanban Backend API - OpenAPI 3.0",
-    "description": "API para gerenciamento de projetos Kanban, responsáveis e indicadores.",
+    "name": "Kanban Backend API - Postman",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "version": "1.0.0"
+    "description": "Coleção Postman gerada a partir do OpenAPI com exemplos realistas."
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "acess_token",
+      "value": "{{JWT_OR_SESSION_TOKEN}}",
+      "type": "string"
+    },
+    {
+      "key": "idUsuarioLogado",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "projetoId",
+      "value": "1001",
+      "type": "string"
+    },
+    {
+      "key": "secretariaId",
+      "value": "10",
+      "type": "string"
+    },
+    {
+      "key": "responsavelId",
+      "value": "501",
+      "type": "string"
+    },
+    {
+      "key": "itemProjetoId",
+      "value": "9001",
+      "type": "string"
+    }
+  ],
   "item": [
     {
       "name": "Projeto",
       "item": [
         {
-          "name": "Lista todos os projetos",
+          "name": "Listar Projetos",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/projetos",
+              "raw": "{{baseUrl}}/projetos?page=0&size=20&sort=id,desc",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -25,33 +60,52 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "123"
+                  "value": "0"
                 },
                 {
                   "key": "size",
-                  "value": "123"
+                  "value": "20"
                 },
                 {
                   "key": "sort",
-                  "value": "nome,asc"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "id,desc"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Realiza o cadastro de Projetos",
+          "name": "Cadastrar Projeto",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Portal de Serviços Digitais\",\n  \"descricao\": \"Projeto para digitalização de serviços públicos\",\n  \"status\": \"A_INICIAR\",\n  \"responsavelId\": [{ \"id\": {{responsavelId}} }],\n  \"dtInicioPrevisto\": \"2025-10-01\",\n  \"dtTerminoPrevisto\": \"2026-03-31\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/projetos",
               "host": [
@@ -60,157 +114,105 @@
               "path": [
                 "projetos"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\",\n  \"status\": \"A_INICIAR\",\n  \"responsavelId\": [\n    {\n      \"id\": 123\n    }\n  ],\n  \"dtInicioPrevisto\": \"string_exemplo\",\n  \"dtTerminoPrevisto\": \"string_exemplo\",\n  \"dtInicioRealizado\": \"string_exemplo\",\n  \"dtTerminoRealizado\": \"string_exemplo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Buscar projeto por ID",
+          "name": "Buscar Projeto por ID",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/projetos/123",
+              "raw": "{{baseUrl}}/projetos/{{projetoId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "projetos",
-                "123"
+                "{{projetoId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Atualizar projeto",
+          "name": "Atualizar Projeto",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Portal de Serviços Digitais - Fase 2\",\n  \"descricao\": \"Ampliação de módulos de atendimento e integração\",\n  \"status\": \"EM_ANDAMENTO\",\n  \"responsavelId\": [{{responsavelId}}],\n  \"dtInicioPrevisto\": \"2025-10-01\",\n  \"dtTerminoPrevisto\": \"2026-04-30\",\n  \"dtInicioRealizado\": \"2025-10-05\",\n  \"dtTerminoRealizado\": null,\n  \"diasAtraso\": 0,\n  \"percentualTempoRestante\": 72.5\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/projetos/123",
+              "raw": "{{baseUrl}}/projetos/{{projetoId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "projetos",
-                "123"
+                "{{projetoId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\",\n  \"status\": \"A_INICIAR\",\n  \"responsavelId\": [\n    123\n  ],\n  \"dtInicioPrevisto\": \"string_exemplo\",\n  \"dtTerminoPrevisto\": \"string_exemplo\",\n  \"dtInicioRealizado\": \"string_exemplo\",\n  \"dtTerminoRealizado\": \"string_exemplo\",\n  \"diasAtraso\": 123,\n  \"percentualTempoRestante\": 123.45\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Excluir projeto",
+          "name": "Excluir Projeto",
           "request": {
             "method": "DELETE",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/projetos/123",
+              "raw": "{{baseUrl}}/projetos/{{projetoId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "projetos",
-                "123"
+                "{{projetoId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Mover status do projeto",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/projetos/123/status",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "projetos",
-                "123",
-                "status"
-              ],
-              "query": [
-                {
-                  "key": "novoStatus",
-                  "value": "A_INICIAR"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Listar projetos por status",
+          "name": "Listar Projetos por Status",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/projetos/por-status",
+              "raw": "{{baseUrl}}/projetos/por-status?status=A_INICIAR&page=0&size=10&sort=id,desc",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -225,38 +227,72 @@
                 },
                 {
                   "key": "page",
-                  "value": "123"
+                  "value": "0"
                 },
                 {
                   "key": "size",
-                  "value": "123"
+                  "value": "10"
                 },
                 {
                   "key": "sort",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "id,desc"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Mover Status do Projeto",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{baseUrl}}/projetos/{{projetoId}}/status?novoStatus=EM_ANDAMENTO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projetos",
+                "{{projetoId}}",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "novoStatus",
+                  "value": "EM_ANDAMENTO"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "Indicador",
+      "name": "Indicadores",
       "item": [
         {
-          "name": "Quantidade de projetos por status",
+          "name": "Quantidade por Status",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
               "raw": "{{baseUrl}}/indicadores/projetos/quantidade-por-status",
               "host": [
@@ -267,26 +303,26 @@
                 "projetos",
                 "quantidade-por-status"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Média de dias de atraso por status",
+          "name": "Média de Atraso por Status",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/indicadores/projetos/media-atraso-por-status",
+              "raw": "{{baseUrl}}/indicadores/projetos/media-atraso-por-status?status=EM_ANDAMENTO",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -298,30 +334,49 @@
               "query": [
                 {
                   "key": "status",
-                  "value": "A_INICIAR"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "EM_ANDAMENTO"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "Usuario",
+      "name": "Usuário",
       "item": [
         {
-          "name": "realiza o cadastro do usuario",
+          "name": "Cadastrar Usuário",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Alice Silva\",\n  \"email\": \"alice.silva@example.com\",\n  \"senha\": \"Secr3t!@#\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/usuario",
               "host": [
@@ -330,23 +385,31 @@
               "path": [
                 "usuario"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nome\": \"string_exemplo\",\n  \"email\": \"string_exemplo\",\n  \"senha\": \"string_exemplo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           }
         },
         {
-          "name": "Realiza o login do usuário",
+          "name": "Login Usuário",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice.silva@example.com\",\n  \"senha\": \"Secr3t!@#\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/usuario/login",
               "host": [
@@ -356,15 +419,6 @@
                 "usuario",
                 "login"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"string_exemplo\",\n  \"senha\": \"string_exemplo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           }
         }
@@ -374,10 +428,9 @@
       "name": "Secretaria",
       "item": [
         {
-          "name": "Lista todas as secretarias",
+          "name": "Listar Secretarias",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
               "raw": "{{baseUrl}}/secretaria",
               "host": [
@@ -386,24 +439,42 @@
               "path": [
                 "secretaria"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Cadastra uma nova secretaria",
+          "name": "Cadastrar Secretaria",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nmSecretaria\": \"Secretaria de Inovação\",\n  \"descricao\": \"Órgão responsável por projetos de inovação\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/secretaria",
               "host": [
@@ -412,130 +483,110 @@
               "path": [
                 "secretaria"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nmSecretaria\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Busca uma secretaria pelo ID",
+          "name": "Buscar Secretaria por ID",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/secretaria/123",
+              "raw": "{{baseUrl}}/secretaria/{{secretariaId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "secretaria",
-                "123"
+                "{{secretariaId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Atualiza uma secretaria existente",
+          "name": "Atualizar Secretaria",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nmSecretaria\": \"Secretaria de Inovação e Tecnologia\",\n  \"descricao\": \"Atualização de nomenclatura e escopo\"\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/secretaria/123",
+              "raw": "{{baseUrl}}/secretaria/{{secretariaId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "secretaria",
-                "123"
+                "{{secretariaId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nmSecretaria\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Exclui uma secretaria existente",
+          "name": "Excluir Secretaria",
           "request": {
             "method": "DELETE",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/secretaria/123",
+              "raw": "{{baseUrl}}/secretaria/{{secretariaId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "secretaria",
-                "123"
+                "{{secretariaId}}"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            }
+              "query": []
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "Responsavel",
+      "name": "Responsável",
       "item": [
         {
-          "name": "Lista todos os responsáveis",
+          "name": "Listar Responsáveis",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/responsavel",
+              "raw": "{{baseUrl}}/responsavel?page=0&size=20&sort=id,asc",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -545,33 +596,52 @@
               "query": [
                 {
                   "key": "page",
-                  "value": "123"
+                  "value": "0"
                 },
                 {
                   "key": "size",
-                  "value": "123"
+                  "value": "20"
                 },
                 {
                   "key": "sort",
                   "value": "id,asc"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Cadastra um novo responsável",
+          "name": "Cadastrar Responsável",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cargoId\": 3,\n  \"secretariaId\": {{secretariaId}},\n  \"usuario\": {\n    \"nome\": \"Bruno Lima\",\n    \"email\": \"bruno.lima@example.com\",\n    \"senha\": \"Brun0#2025\"\n  }\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/responsavel",
               "host": [
@@ -580,35 +650,34 @@
               "path": [
                 "responsavel"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cargoId\": 123,\n  \"secretariaId\": 123,\n  \"usuario\": {\n    \"id\": 123,\n    \"nome\": \"string_exemplo\",\n    \"email\": \"string_exemplo\",\n    \"senha\": \"string_exemplo\"\n  }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Atualiza um responsável existente",
+          "name": "Atualizar Responsável",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cargoId\": 4,\n  \"secretariaId\": {{secretariaId}}\n}"
+            },
             "url": {
-              "raw": "{{baseUrl}}/responsavel",
+              "raw": "{{baseUrl}}/responsavel?id={{responsavelId}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -618,36 +687,18 @@
               "query": [
                 {
                   "key": "id",
-                  "value": "123"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "{{responsavelId}}"
                 }
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cargoId\": 123,\n  \"secretariaId\": 123\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           }
         },
         {
-          "name": "Exclui um responsável existente",
+          "name": "Excluir Responsável",
           "request": {
             "method": "DELETE",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/responsavel",
+              "raw": "{{baseUrl}}/responsavel?id={{responsavelId}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -657,32 +708,33 @@
               "query": [
                 {
                   "key": "id",
-                  "value": "123"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "{{responsavelId}}"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         }
       ]
     },
     {
-      "name": "ItemProjeto",
+      "name": "Item Projeto",
       "item": [
         {
-          "name": "Listar todos os itens de projeto",
+          "name": "Listar Itens do Projeto",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/item-projeto",
+              "raw": "{{baseUrl}}/item-projeto?idItemProjeto={{itemProjetoId}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -692,25 +744,44 @@
               "query": [
                 {
                   "key": "idItemProjeto",
-                  "value": "123"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "{{itemProjetoId}}"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         },
         {
-          "name": "Inclui um novo item de projeto",
+          "name": "Incluir Item de Projeto",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{itemProjetoId}},\n  \"projeto_id\": {{projetoId}},\n  \"titulo\": \"Ajustar layout da tela de login\",\n  \"descricao\": \"Corrigir responsividade e alinhamento de campos\",\n  \"responsavelId\": [{ \"id\": {{responsavelId}} }],\n  \"status_item\": \"A_FAZER\",\n  \"prioridade\": \"MEDIA\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/item-projeto",
               "host": [
@@ -719,33 +790,32 @@
               "path": [
                 "item-projeto"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 123,\n  \"projeto_id\": 123,\n  \"titulo\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\",\n  \"responsavelId\": [\n    {\n      \"id\": 123\n    }\n  ],\n  \"status_item\": \"EM_ANALISE\",\n  \"prioridade\": \"BAIXA\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Atualiza um item de projeto existente",
+          "name": "Atualizar Item de Projeto",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{itemProjetoId}},\n  \"projeto_id\": {{projetoId}},\n  \"titulo\": \"Ajustar layout da tela de login (revisto)\",\n  \"descricao\": \"Melhorar acessibilidade e contraste\",\n  \"responsavelId\": [{ \"id\": {{responsavelId}} }],\n  \"status_item\": \"EM_PROGRESSO\",\n  \"prioridade\": \"ALTA\"\n}"
+            },
             "url": {
               "raw": "{{baseUrl}}/item-projeto",
               "host": [
@@ -754,35 +824,16 @@
               "path": [
                 "item-projeto"
               ],
-              "query": [
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 123,\n  \"projeto_id\": 123,\n  \"titulo\": \"string_exemplo\",\n  \"descricao\": \"string_exemplo\",\n  \"responsavelId\": [\n    {\n      \"id\": 123\n    }\n  ],\n  \"status_item\": \"EM_ANALISE\",\n  \"prioridade\": \"BAIXA\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "query": []
             }
           }
         },
         {
-          "name": "Exclui um item de projeto existente",
+          "name": "Excluir Item de Projeto",
           "request": {
             "method": "DELETE",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/item-projeto",
+              "raw": "{{baseUrl}}/item-projeto?idItemProjeto={{itemProjetoId}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -792,18 +843,20 @@
               "query": [
                 {
                   "key": "idItemProjeto",
-                  "value": "123"
-                },
-                {
-                  "key": "acess_token",
-                  "value": "string_exemplo"
-                },
-                {
-                  "key": "idUsuarioLogado",
-                  "value": "123"
+                  "value": "{{itemProjetoId}}"
                 }
               ]
-            }
+            },
+            "header": [
+              {
+                "key": "acess_token",
+                "value": "{{acess_token}}"
+              },
+              {
+                "key": "idUsuarioLogado",
+                "value": "{{idUsuarioLogado}}"
+              }
+            ]
           }
         }
       ]
