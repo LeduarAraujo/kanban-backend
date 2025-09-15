@@ -225,6 +225,9 @@
                         <exclude>**/GlobalExceptionHandler.class</exclude>
                         <exclude>**/ErrorResponse.class</exclude>
 
+                        <!-- exclui classes de lambda -->
+                        <exclude>**/*$Lambda$*</exclude>
+                        <exclude>**/*$$Lambda$*</exclude>
 
                     </excludes>
                 </configuration>

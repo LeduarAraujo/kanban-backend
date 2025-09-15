@@ -102,7 +102,4 @@ public class ItemProjetoController implements ItemProjetoApi {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
     }
-
-
-
 }
