@@ -10,6 +10,7 @@ import com.facilit.kanban_backend.repository.CargoRepository;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
 import com.facilit.kanban_backend.repository.ResponsavelRepository;
 import com.facilit.kanban_backend.repository.SecretariaRepository;
+import com.facilit.kanban_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +30,11 @@ public class ResponsavelService {
     private final CargoRepository cargoRepository;
 
 
-    public ListaResponsavelResponseRepresentation listarResponsaveis(Pageable pPageable) {
-        Page<ResponsavelEntity> retornoConsulta = responsavelRepository.findAll(pPageable);
+    public ListaResponsavelResponseRepresentation listarResponsaveis(String pAcessToken, Long pIdUsuarioLogado, Pageable pPageable) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
+        Page<ResponsavelEntity> retornoConsulta = responsavelRepository.findAll(pPageable);
         return ListaResponsavelResponseRepresentation.builder()
                 .content(retornoConsulta.map(ResponsavelMapper::toRepresentation).getContent())
                 .pageable(ListaProjetoResponsePageableRepresentation.builder()
@@ -48,7 +51,10 @@ public class ResponsavelService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public SuccessMessageRepresentation excluirResponsavel(Long pIdResponsavel) {
+    public SuccessMessageRepresentation excluirResponsavel(String pAcessToken, Long pIdUsuarioLogado, Long pIdResponsavel) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         // Verifica se o responsável está associado a algum projeto
         if (projetoRepository.findByResponsaveisId(pIdResponsavel).size() > 0) {
             throw new IllegalArgumentException("Não é possível excluir o responsável, pois ele está associado a projetos.");
@@ -61,7 +67,10 @@ public class ResponsavelService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponsavelRepresentation cadastrarResponsavel(CadastroResponsavelBodyRepresentation pCadastroResponsavelBodyRepresentation) throws EmailEmUsoException {
+    public ResponsavelRepresentation cadastrarResponsavel(String pAcessToken, Long pIdUsuarioLogado, CadastroResponsavelBodyRepresentation pCadastroResponsavelBodyRepresentation) throws EmailEmUsoException {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ResponsavelEntity responsavelEntity = new ResponsavelEntity();
         UsuarioEntity usuario = UsuarioMapper.toEntity(pCadastroResponsavelBodyRepresentation.getUsuario());
         if (pCadastroResponsavelBodyRepresentation.getUsuario().getId() == null) {
@@ -82,8 +91,11 @@ public class ResponsavelService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponsavelRepresentation atualizarResponsavelPorId(Long pIdResponsavel
+    public ResponsavelRepresentation atualizarResponsavelPorId(String pAcessToken, Long pIdUsuarioLogado, Long pIdResponsavel
             , AtualizarResponsavelBodyRepresentation pAtualizarResponsavelBodyRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ResponsavelEntity responsavelEntity = responsavelRepository.findById(pIdResponsavel)
                 .orElseThrow(() -> new IllegalArgumentException("Responsável não encontrado"));
 

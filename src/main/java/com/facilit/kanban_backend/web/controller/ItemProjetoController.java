@@ -21,15 +21,19 @@ public class ItemProjetoController implements ItemProjetoApi {
      * PUT /item-projeto : Atualiza um item de projeto existente
      * Atualiza um item de projeto existente
      *
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @param pItemProjetoResponseRepresentation (optional)
      * @return successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<ItemProjetoResponseRepresentation> atualizarItemProjeto(ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+    public ResponseEntity<ItemProjetoResponseRepresentation> atualizarItemProjeto(String pAcessToken, Long pIdUsuarioLogado
+            , ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
         try {
-            return ResponseEntity.ok().body(itemProjetoService.atualizarItemProjeto(pItemProjetoResponseRepresentation));
+            return ResponseEntity.ok().body(itemProjetoService.atualizarItemProjeto(pAcessToken, pIdUsuarioLogado
+                    , pItemProjetoResponseRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -40,14 +44,16 @@ public class ItemProjetoController implements ItemProjetoApi {
      * Exclui um item de projeto existente
      *
      * @param pIdItemProjeto (required)
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @return successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> excluirItemProjeto(Long pIdItemProjeto) {
+    public ResponseEntity<SuccessMessageRepresentation> excluirItemProjeto(Long pIdItemProjeto, String pAcessToken, Long pIdUsuarioLogado) {
         try {
-            return ResponseEntity.ok().body(itemProjetoService.excluir(pIdItemProjeto));
+            return ResponseEntity.ok().body(itemProjetoService.excluir(pAcessToken, pIdUsuarioLogado, pIdItemProjeto));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -57,15 +63,19 @@ public class ItemProjetoController implements ItemProjetoApi {
      * POST /item-projeto : Inclui um novo item de projeto
      * Inclui um novo item de projeto
      *
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @param pItemProjetoResponseRepresentation (optional)
      * @return successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<ItemProjetoResponseRepresentation> incluirItemProjeto(ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+    public ResponseEntity<ItemProjetoResponseRepresentation> incluirItemProjeto(String pAcessToken, Long pIdUsuarioLogado
+            , ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
         try {
-            return ResponseEntity.ok().body(itemProjetoService.incluirItemProjeto(pItemProjetoResponseRepresentation));
+            return ResponseEntity.ok().body(itemProjetoService.incluirItemProjeto(pAcessToken, pIdUsuarioLogado,
+                    pItemProjetoResponseRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -76,16 +86,23 @@ public class ItemProjetoController implements ItemProjetoApi {
      * Lista todos os itens de projeto
      *
      * @param pIdItemProjeto (required)
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @return successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<List<ItemProjetoResponseRepresentation>> listarItensProjeto(Long pIdItemProjeto) {
+    public ResponseEntity<List<ItemProjetoResponseRepresentation>> listarItensProjeto(Long pIdItemProjeto
+            , String pAcessToken, Long pIdUsuarioLogado) {
         try {
-            return ResponseEntity.ok().body(itemProjetoService.listarPorProjeto(pIdItemProjeto));
+            return ResponseEntity.ok().body(itemProjetoService.listarPorProjeto(pAcessToken, pIdUsuarioLogado,
+                    pIdItemProjeto));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
     }
+
+
+
 }

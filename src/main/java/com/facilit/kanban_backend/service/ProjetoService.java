@@ -9,6 +9,7 @@ import com.facilit.kanban_backend.mapper.ProjetoMapper;
 import com.facilit.kanban_backend.repository.ItemProjetoRepository;
 import com.facilit.kanban_backend.repository.ProjetoRepository;
 import com.facilit.kanban_backend.repository.ResponsavelRepository;
+import com.facilit.kanban_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,11 @@ public class ProjetoService {
     private final ItemProjetoRepository itemProjetoRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjetoRepresentation cadastrarProjeto(CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
+    public ProjetoRepresentation cadastrarProjeto(String pAcessToken, Long pIdUsuarioLogado
+            , CadastrarProjetoRequestRepresentation pCadastrarProjetoRequestRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ProjetoEntity projeto = new ProjetoEntity();
 
         projeto.setNome(pCadastrarProjetoRequestRepresentation.getNome());
@@ -55,7 +60,11 @@ public class ProjetoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public SuccessMessageRepresentation excluirProjeto(Long pIdProjeto) {
+    public SuccessMessageRepresentation excluirProjeto(String pAcessToken, Long pIdUsuarioLogado
+            , Long pIdProjeto) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         // Necessário buscar os itens do projeto para fazer uma limpeza em cascata.
         itemProjetoRepository.deleteAll(itemProjetoRepository.findByProjetoId(pIdProjeto));
 
@@ -74,11 +83,12 @@ public class ProjetoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjetoRepresentation atualizarProjeto(Long pIdProjeto
+    public ProjetoRepresentation atualizarProjeto(Long pIdProjeto, String pAcessToken, Long pIdUsuarioLogado
             , AtualizarProjetoRequestRepresentation pAtualizarProjetoRequestRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
         Optional<ProjetoEntity> projetoEntity = projetoRepository.findById(pIdProjeto);
-
         if (projetoEntity.isEmpty()) {
             throw new BusinessException("Projeto não encontrado");
         }
@@ -109,15 +119,20 @@ public class ProjetoService {
         return ProjetoMapper.toRepresentation(saveResponse);
     }
 
-    public ProjetoRepresentation buscarProjetoPorId(Long id) {
+    public ProjetoRepresentation buscarProjetoPorId(Long pIdProjeto, String pAcessToken, Long pIdUsuarioLogado) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         return ProjetoMapper.toRepresentation(
-                projetoRepository.findById(id)
+                projetoRepository.findById(pIdProjeto)
                 .orElseThrow(() -> new BusinessException("Projeto não encontrado")));
     }
 
-    public ListaProjetoResponseRepresentation listarProjetos(Pageable pPageable) {
-        Page<ProjetoEntity> retorno = projetoRepository.findAll(pPageable);
+    public ListaProjetoResponseRepresentation listarProjetos(String pAcessToken, Long pIdUsuarioLogado, Pageable pPageable) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
+        Page<ProjetoEntity> retorno = projetoRepository.findAll(pPageable);
         return ListaProjetoResponseRepresentation.builder()
                 .content(retorno.map(ProjetoMapper::toRepresentation).getContent())
                 .pageable(ListaProjetoResponsePageableRepresentation.builder()
@@ -133,9 +148,12 @@ public class ProjetoService {
                 .build();
     }
 
-    public ListaProjetoResponseRepresentation listarProjetosPorStatus(StatusProjetoRepresentation status, Pageable pPageable) {
-        Page<ProjetoEntity> retorno = projetoRepository.findByStatus(StatusProjetoEnum.valueOf(status.toString()), pPageable);
+    public ListaProjetoResponseRepresentation listarProjetosPorStatus(String pAcessToken, Long pIdUsuarioLogado
+            , StatusProjetoRepresentation pStatusProjetoRepresentation, Pageable pPageable) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
+        Page<ProjetoEntity> retorno = projetoRepository.findByStatus(StatusProjetoEnum.valueOf(pStatusProjetoRepresentation.toString()), pPageable);
         return ListaProjetoResponseRepresentation.builder()
                 .content(retorno.map(ProjetoMapper::toRepresentation).getContent())
                 .pageable(ListaProjetoResponsePageableRepresentation.builder()
@@ -152,9 +170,12 @@ public class ProjetoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjetoRepresentation moverStatus(Long pIdProjeto, StatusProjetoRepresentation novoStatus) {
-        ProjetoEntity projeto = projetoRepository.findById(pIdProjeto).get();
+    public ProjetoRepresentation moverStatus(String pAcessToken, Long pIdUsuarioLogado
+            , Long pIdProjeto, StatusProjetoRepresentation novoStatus) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
+        ProjetoEntity projeto = projetoRepository.findById(pIdProjeto).get();
         aplicarAcoesAutomaticasDeTransicao(projeto, StatusProjetoEnum.valueOf(novoStatus.toString()));
         recalcularMetricasEStatus(projeto);
 
@@ -165,9 +186,11 @@ public class ProjetoService {
         return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
     }
 
-    public List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> quantidadeProjetosPorStatus() {
-        List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> retorno = new ArrayList<>();
+    public List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> quantidadeProjetosPorStatus(String pAcessToken, Long pIdUsuarioLogado) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
 
+        List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation> retorno = new ArrayList<>();
         projetoRepository.countProjetosByStatus().stream().forEach(projeto -> {
             retorno.add(QuantidadeProjetosPorStatus200ResponseInnerRepresentation.builder()
                     .statusProjeto(StatusProjetoRepresentation.fromValue(projeto.getStatusProjeto().toString()))
@@ -178,7 +201,11 @@ public class ProjetoService {
         return retorno;
     }
 
-    public Double mediaDiasAtrasoPorStatus(StatusProjetoRepresentation pStatusProjetoRepresentation) {
+    public Double mediaDiasAtrasoPorStatus(String pAcessToken, Long pIdUsuarioLogado
+            , StatusProjetoRepresentation pStatusProjetoRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         return projetoRepository.avgDiasAtrasoByStatus(StatusProjetoEnum.valueOf(pStatusProjetoRepresentation.toString()));
     }
 
