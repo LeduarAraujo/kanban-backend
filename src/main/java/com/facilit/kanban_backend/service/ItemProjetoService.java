@@ -52,6 +52,11 @@ public class ItemProjetoService {
         ItemProjetoEntity itemProjetoEntity = itemProjetoRepository.findById(pItemProjetoResponseRepresentation.getId()).get();
         this.gravarHistorico(itemProjetoEntity);
 
+        /**
+         * O motivo de não usar o mapper aqui é que ele ele não deve atualizar todos os campos
+         * Exemplo: projeto, dataCriacao, id, etc...
+         * Apenas os campos que podem ser alterados
+         */
         itemProjetoEntity.setTitulo(pItemProjetoResponseRepresentation.getTitulo());
         itemProjetoEntity.setDescricao(pItemProjetoResponseRepresentation.getDescricao());
         itemProjetoEntity.setStatus(StatusItemProjetoEnum.valueOf(pItemProjetoResponseRepresentation.getStatusItem().toString()));
@@ -63,7 +68,6 @@ public class ItemProjetoService {
             responsavelEntity.setId(responsavelId.getId());
             listResponsavel.add(responsavelEntity);
         });
-
         itemProjetoEntity.setResponsaveis(listResponsavel);
 
         return null;
