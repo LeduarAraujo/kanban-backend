@@ -195,6 +195,54 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <!-- Configuração do JaCoCo para excluir pacotes específicos -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version> <!-- ou a versão que estiver usando -->
+                <configuration>
+                    <excludes>
+                        <!-- Exclui qualquer classe no pacote openapi -->
+                        <exclude>**/openapi/**</exclude>
+                        <!-- Exclui qualquer classe no pacote representation -->
+                        <exclude>**/representation/**</exclude>
+                        <!-- Exclui qualquer classe no pacote domain -->
+                        <exclude>**/domain/**</exclude>
+                        <!-- Exclui qualquer classe no pacote config -->
+                        <exclude>**/config/**</exclude>
+                        <!-- Exclui qualquer classe no pacote dto -->
+                        <exclude>**/dto/**</exclude>
+                        <!-- Exclui qualquer classe no pacote repository -->
+                        <exclude>**/repository/**</exclude>
+                        <!-- Exclui qualquer classe no pacote exception -->
+                        <exclude>**/exception/**</exclude>
+                        <!-- Exclui qualquer classe no pacote mapper -->
+                        <exclude>**/mapper/**</exclude>
+
+                        <!-- Caso queira excluir classes específicas -->
+                        <exclude>**/KanbanBackendApplication.class</exclude>
+                        <exclude>**/GlobalExceptionHandler.class</exclude>
+                        <exclude>**/ErrorResponse.class</exclude>
+
+
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 

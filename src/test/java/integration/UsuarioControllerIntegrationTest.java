@@ -21,7 +21,7 @@ import static fixtures.UsuarioFixtures.criarLoginUsuarioRequestRepresentation;
 @SpringBootTest(classes = KanbanBackendApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Transactional
-public class UsuarioControllerTest {
+public class UsuarioControllerIntegrationTest {
 
     @Autowired
     private UsuarioController usuarioController;

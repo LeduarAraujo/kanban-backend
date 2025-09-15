@@ -179,10 +179,6 @@ public class ProjetoService {
         aplicarAcoesAutomaticasDeTransicao(projeto, StatusProjetoEnum.valueOf(novoStatus.toString()));
         recalcularMetricasEStatus(projeto);
 
-        if (projeto.getStatus() != StatusProjetoEnum.valueOf(novoStatus.toString())) {
-            throw new BusinessException(mensagemInconsistenciaStatus(projeto, StatusProjetoEnum.valueOf(novoStatus.toString())));
-        }
-
         return ProjetoMapper.toRepresentation(projetoRepository.save(projeto));
     }
 
@@ -298,38 +294,38 @@ public class ProjetoService {
         projeto.setPercentualTempoRestante(calcularPercentualTempoRestante(projeto));
     }
 
-    public StatusProjetoEnum calcularStatus(ProjetoEntity p) {
+    public StatusProjetoEnum calcularStatus(ProjetoEntity pProjetoEntity) {
         LocalDate hoje = LocalDate.now();
 
-        if (p.getTerminoRealizado() != null) {
+        if (pProjetoEntity.getTerminoRealizado() != null) {
             return StatusProjetoEnum.CONCLUIDO;
         }
 
-        boolean inicioRealizado = p.getInicioRealizado() != null;
-        boolean terminoPrevistoMaiorHoje = p.getTerminoPrevisto() != null && p.getTerminoPrevisto().isAfter(hoje);
-        boolean terminoRealizadoVazio = p.getTerminoRealizado() == null;
+        boolean inicioRealizado = pProjetoEntity.getInicioRealizado() != null;
+        boolean terminoPrevistoMaiorHoje = pProjetoEntity.getTerminoPrevisto() != null && pProjetoEntity.getTerminoPrevisto().isAfter(hoje);
+        boolean terminoRealizadoVazio = pProjetoEntity.getTerminoRealizado() == null;
 
         if (inicioRealizado && terminoPrevistoMaiorHoje && terminoRealizadoVazio) {
             return StatusProjetoEnum.EM_ANDAMENTO;
         }
 
-        boolean inicioPrevistoMenorHojeESemInicioRealizado = p.getInicioPrevisto() != null
-                && p.getInicioPrevisto().isBefore(hoje)
-                && p.getInicioRealizado() == null;
+        boolean inicioPrevistoMenorHojeESemInicioRealizado = pProjetoEntity.getInicioPrevisto() != null
+                && pProjetoEntity.getInicioPrevisto().isBefore(hoje)
+                && pProjetoEntity.getInicioRealizado() == null;
 
-        boolean terminoPrevistoMenorHojeESemTerminoRealizado = p.getTerminoPrevisto() != null
-                && p.getTerminoPrevisto().isBefore(hoje)
-                && p.getTerminoRealizado() == null;
+        boolean terminoPrevistoMenorHojeESemTerminoRealizado = pProjetoEntity.getTerminoPrevisto() != null
+                && pProjetoEntity.getTerminoPrevisto().isBefore(hoje)
+                && pProjetoEntity.getTerminoRealizado() == null;
 
         if (inicioPrevistoMenorHojeESemInicioRealizado || terminoPrevistoMenorHojeESemTerminoRealizado) {
             return StatusProjetoEnum.ATRASADO;
         }
 
-        if (p.getInicioRealizado() == null && p.getTerminoRealizado() == null) {
+        if (pProjetoEntity.getInicioRealizado() == null && pProjetoEntity.getTerminoRealizado() == null) {
             return StatusProjetoEnum.A_INICIAR;
         }
 
-        return p.getStatus() != null ? p.getStatus() : StatusProjetoEnum.A_INICIAR;
+        return pProjetoEntity.getStatus() != null ? pProjetoEntity.getStatus() : StatusProjetoEnum.A_INICIAR;
     }
 
     public Float calcularPercentualTempoRestante(ProjetoEntity p) {
