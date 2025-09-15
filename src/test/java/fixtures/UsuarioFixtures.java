@@ -16,7 +16,17 @@ public class UsuarioFixtures {
     }
 
     public static UsuarioEntity criarUsuarioEntity() {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setNome("Usuário Existente");
+        usuarioEntity.setEmail("teste@teste.com");
+        usuarioEntity.setSenha("$as7d6-da9#08sd");
+
+        return usuarioEntity;
+    }
+
+    public static UsuarioEntity criarUsuarioEntityExistente() {
         UsuarioEntity usuarioExistente = new UsuarioEntity();
+        usuarioExistente.setId(1L);
         usuarioExistente.setNome("Usuário Existente");
         usuarioExistente.setEmail("teste@teste.com");
         usuarioExistente.setSenha("$as7d6-da9#08sd");

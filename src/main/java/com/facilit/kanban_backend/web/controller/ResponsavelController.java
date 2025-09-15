@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequiredArgsConstructor
 public class ResponsavelController  implements ResponsavelApi {
@@ -21,6 +20,8 @@ public class ResponsavelController  implements ResponsavelApi {
     /**
      * GET /responsavel : Lista todos os responsáveis
      *
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @param pPage (optional, default to 0)
      * @param pSize (optional, default to 20)
      * @param pSort (optional, default to id)
@@ -30,10 +31,10 @@ public class ResponsavelController  implements ResponsavelApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<ListaResponsavelResponseRepresentation> listarResponsaveis(Integer pPage, Integer pSize, String pSort) {
+    public ResponseEntity<ListaResponsavelResponseRepresentation> listarResponsaveis(String pAcessToken, Long pIdUsuarioLogado, Integer pPage, Integer pSize, String pSort) {
         try {
             Pageable pageable = PageRequest.of(pPage, pSize, Sort.by(pSort));
-            return ResponseEntity.ok().body(responsavelService.listarResponsaveis(pageable));
+            return ResponseEntity.ok().body(responsavelService.listarResponsaveis(pAcessToken, pIdUsuarioLogado, pageable));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -43,15 +44,17 @@ public class ResponsavelController  implements ResponsavelApi {
      * DELETE /responsavel : Exclui um responsável existente
      *
      * @param pIdResponsavel ID do responsável a ser excluído (required)
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @return Successful operation (status code 200)
      * or Bad Request (status code 400)
      * or Unauthorized (status code 401)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> excluirResponsavel(Long pIdResponsavel) {
+    public ResponseEntity<SuccessMessageRepresentation> excluirResponsavel(Long pIdResponsavel, String pAcessToken, Long pIdUsuarioLogado) {
         try {
-            return ResponseEntity.ok().body(responsavelService.excluirResponsavel(pIdResponsavel));
+            return ResponseEntity.ok().body(responsavelService.excluirResponsavel(pAcessToken, pIdUsuarioLogado, pIdResponsavel));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -60,6 +63,8 @@ public class ResponsavelController  implements ResponsavelApi {
     /**
      * POST /responsavel : Cadastra um novo responsável
      *
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @param pCadastroResponsavelBodyRepresentation (required)
      * @return Successful operation (status code 200)
      * or Bad Request (status code 400)
@@ -67,9 +72,10 @@ public class ResponsavelController  implements ResponsavelApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<ResponsavelRepresentation> cadastrarResponsavel(CadastroResponsavelBodyRepresentation pCadastroResponsavelBodyRepresentation) {
+    public ResponseEntity<ResponsavelRepresentation> cadastrarResponsavel(String pAcessToken, Long pIdUsuarioLogado
+            , CadastroResponsavelBodyRepresentation pCadastroResponsavelBodyRepresentation) {
         try {
-            return ResponseEntity.ok().body(responsavelService.cadastrarResponsavel(pCadastroResponsavelBodyRepresentation));
+            return ResponseEntity.ok().body(responsavelService.cadastrarResponsavel(pAcessToken, pIdUsuarioLogado, pCadastroResponsavelBodyRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -79,6 +85,8 @@ public class ResponsavelController  implements ResponsavelApi {
      * PUT /responsavel : Atualiza um responsável existente
      *
      * @param pIdResponsavel                                     ID do responsável a ser atualizado (required)
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @param pAtualizarResponsavelBodyRepresentation (required)
      * @return Successful operation (status code 200)
      * or Bad Request (status code 400)
@@ -86,9 +94,10 @@ public class ResponsavelController  implements ResponsavelApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<ResponsavelRepresentation> atualizarResponsavelPorId(Long pIdResponsavel, AtualizarResponsavelBodyRepresentation pAtualizarResponsavelBodyRepresentation) {
+    public ResponseEntity<ResponsavelRepresentation> atualizarResponsavelPorId(Long pIdResponsavel, String pAcessToken, Long pIdUsuarioLogado
+            , AtualizarResponsavelBodyRepresentation pAtualizarResponsavelBodyRepresentation) {
         try {
-            return ResponseEntity.ok().body(responsavelService.atualizarResponsavelPorId(pIdResponsavel
+            return ResponseEntity.ok().body(responsavelService.atualizarResponsavelPorId(pAcessToken, pIdUsuarioLogado, pIdResponsavel
                     , pAtualizarResponsavelBodyRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);

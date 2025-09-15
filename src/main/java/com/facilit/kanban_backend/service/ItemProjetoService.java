@@ -9,7 +9,9 @@ import com.facilit.kanban_backend.domain.enums.PrioridadeEnum;
 import com.facilit.kanban_backend.domain.enums.StatusItemProjetoEnum;
 import com.facilit.kanban_backend.mapper.HistoricoItemProjetoMapper;
 import com.facilit.kanban_backend.mapper.ItemProjetoMapper;
+import com.facilit.kanban_backend.repository.HistoricoItemProjetoRepository;
 import com.facilit.kanban_backend.repository.ItemProjetoRepository;
+import com.facilit.kanban_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +25,14 @@ import java.util.Set;
 public class ItemProjetoService {
 
     private final ItemProjetoRepository itemProjetoRepository;
-    private final HistoricoItemProjetoService historicoItemProjetoService;
+    private final HistoricoItemProjetoRepository historicoItemProjetoRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public ItemProjetoResponseRepresentation incluirItemProjeto(ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+    public ItemProjetoResponseRepresentation incluirItemProjeto(String pAcessToken, Long pIdUsuarioLogado
+            , ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ItemProjetoEntity retornoInclusao = itemProjetoRepository.save(ItemProjetoMapper
                 .toEntity(pItemProjetoResponseRepresentation));
 
@@ -34,7 +40,10 @@ public class ItemProjetoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public SuccessMessageRepresentation excluir(Long pIdItemProjeto) {
+    public SuccessMessageRepresentation excluir(String pAcessToken, Long pIdUsuarioLogado, Long pIdItemProjeto) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ItemProjetoEntity itemProjetoEntity = itemProjetoRepository.findById(pIdItemProjeto).get();
         this.gravarHistorico(itemProjetoEntity);
 
@@ -42,13 +51,19 @@ public class ItemProjetoService {
         return SuccessMessageRepresentation.builder().message("Item de projeto excluído com sucesso").build();
     }
 
-    public List<ItemProjetoResponseRepresentation> listarPorProjeto(Long pIdItemProjeto) {
+    public List<ItemProjetoResponseRepresentation> listarPorProjeto(String pAcessToken, Long pIdUsuarioLogado, Long pIdItemProjeto) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         List<ItemProjetoEntity> retornoConsulta = itemProjetoRepository.findByProjetoId(pIdItemProjeto);
         return ItemProjetoMapper.toRepresentationList(retornoConsulta);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ItemProjetoResponseRepresentation atualizarItemProjeto(ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+    public ItemProjetoResponseRepresentation atualizarItemProjeto(String pAcessToken, Long pIdUsuarioLogado, ItemProjetoResponseRepresentation pItemProjetoResponseRepresentation) {
+        // Validar token
+        JwtUtil.validateToken(pAcessToken, pIdUsuarioLogado.toString());
+
         ItemProjetoEntity itemProjetoEntity = itemProjetoRepository.findById(pItemProjetoResponseRepresentation.getId()).get();
         this.gravarHistorico(itemProjetoEntity);
 
@@ -76,7 +91,7 @@ public class ItemProjetoService {
     private void gravarHistorico(ItemProjetoEntity pItemProjetoEntity) {
         HistoricoItemProjetoEntity historicoItemProjetoEntity = HistoricoItemProjetoMapper
                 .entityAtualToEntityHistorico(pItemProjetoEntity);
-        historicoItemProjetoService.salvar(historicoItemProjetoEntity);
+        historicoItemProjetoRepository.save(historicoItemProjetoEntity);
     }
 }
 

@@ -6,6 +6,7 @@ import com.facilit.kanban_backend.exception.EmailEmUsoException;
 import com.facilit.kanban_backend.exception.UsuarioInvalido;
 import com.facilit.kanban_backend.mapper.UsuarioMapper;
 import com.facilit.kanban_backend.repository.UsuarioRepository;
+import com.facilit.kanban_backend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,14 +50,15 @@ public class UsuarioService {
         );
 
         if (usuarioOpt != null) {
+            String token = JwtUtil.generateToken(usuarioOpt.getId().toString());
+
             return LoginResponseRepresentation.builder()
-                    .token("token-de-exemplo")
+                    .token(token)
                     .id(usuarioOpt.getId())
                     .nome(usuarioOpt.getNome())
                     .email(usuarioOpt.getEmail())
                     .build();
-        } else {
-                throw new UsuarioInvalido();
         }
+        throw new UsuarioInvalido();
     }
 }

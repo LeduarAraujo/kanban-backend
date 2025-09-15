@@ -48,6 +48,17 @@ paths:
             type: string
             example: nome,asc
             default: id
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -74,7 +85,18 @@ paths:
         - Projeto
       summary: Realiza o cadastro de Projetos
       description: Realiza o cadastro de Projetos
-
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
@@ -153,6 +175,17 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -184,6 +217,17 @@ paths:
           in: path
           required: true
           description: ID do projeto
+          schema:
+            type: integer
+            format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
           schema:
             type: integer
             format: int64
@@ -266,6 +310,17 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Projeto excluído com sucesso
@@ -307,6 +362,17 @@ paths:
           description: Novo status do projeto
           schema:
             $ref: '#/components/schemas/StatusProjeto'
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Status alterado com sucesso
@@ -365,6 +431,17 @@ paths:
           schema:
             type: string
             default: id
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -392,6 +469,18 @@ paths:
         - Indicador
       summary: Quantidade de projetos por status
       description: Retorna a quantidade de projetos agrupados por status
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Indicadores retornados com sucesso
@@ -428,6 +517,17 @@ paths:
           description: Status do projeto para calcular a média
           schema:
             $ref: '#/components/schemas/StatusProjeto'
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Média calculada com sucesso
@@ -558,7 +658,18 @@ paths:
         - Secretaria
       summary: Lista todas as secretarias
       description: ''
-
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -593,6 +704,18 @@ paths:
         - Secretaria
       summary: Cadastra uma nova secretaria
       description: ''
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
@@ -646,6 +769,17 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -688,6 +822,17 @@ paths:
           in: path
           required: true
           description: ID da secretaria a ser atualizada
+          schema:
+            type: integer
+            format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
           schema:
             type: integer
             format: int64
@@ -738,6 +883,17 @@ paths:
           in: path
           required: true
           description: ID da secretaria a ser excluída
+          schema:
+            type: integer
+            format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
           schema:
             type: integer
             format: int64
@@ -795,6 +951,17 @@ paths:
             type: string
             example: id,asc
             default: id
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -826,6 +993,18 @@ paths:
         - Responsavel
       summary: Cadastra um novo responsável
       description: ''
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
@@ -868,6 +1047,17 @@ paths:
           in: query
           required: true
           description: ID do responsável a ser atualizado
+          schema:
+            type: integer
+            format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
           schema:
             type: integer
             format: int64
@@ -916,6 +1106,17 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Successful operation
@@ -956,6 +1157,17 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: successful operation
@@ -983,6 +1195,18 @@ paths:
         - ItemProjeto
       summary: Inclui um novo item de projeto
       description: Inclui um novo item de projeto
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
@@ -1013,6 +1237,18 @@ paths:
         - ItemProjeto
       summary: Atualiza um item de projeto existente
       description: Atualiza um item de projeto existente
+      parameters:
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
       requestBody:
         content:
           application/json:
@@ -1045,6 +1281,17 @@ paths:
       description: Exclui um item de projeto existente
       parameters:
         - name: idItemProjeto
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: acess_token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idUsuarioLogado
           in: query
           required: true
           schema:

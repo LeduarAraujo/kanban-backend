@@ -21,15 +21,17 @@ public class IndicadorController implements IndicadoresApi {
      * GET /indicadores/projetos/media-atraso-por-status : Média de dias de atraso por status
      * Retorna a média de dias de atraso para um status específico
      *
-     * @param pStatusProjetoRepresentation Status do projeto para calcular a média (required)
+     * @param pStatusProjetoRepresentation          Status do projeto para calcular a média (required)
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @return Média calculada com sucesso (status code 200)
      * or Bad Request (status code 400)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<Double> mediaDiasAtrasoPorStatus(StatusProjetoRepresentation pStatusProjetoRepresentation) {
+    public ResponseEntity<Double> mediaDiasAtrasoPorStatus(StatusProjetoRepresentation pStatusProjetoRepresentation, String pAcessToken, Long pIdUsuarioLogado) {
         try {
-            Double media = projetoService.mediaDiasAtrasoPorStatus(pStatusProjetoRepresentation);
+            Double media = projetoService.mediaDiasAtrasoPorStatus(pAcessToken, pIdUsuarioLogado, pStatusProjetoRepresentation);
             return ResponseEntity.ok(media != null ? media : 0.0);
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
@@ -40,13 +42,15 @@ public class IndicadorController implements IndicadoresApi {
      * GET /indicadores/projetos/quantidade-por-status : Quantidade de projetos por status
      * Retorna a quantidade de projetos agrupados por status
      *
+     * @param pAcessToken      (required)
+     * @param pIdUsuarioLogado (required)
      * @return Indicadores retornados com sucesso (status code 200)
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation>> quantidadeProjetosPorStatus() {
+    public ResponseEntity<List<QuantidadeProjetosPorStatus200ResponseInnerRepresentation>> quantidadeProjetosPorStatus(String pAcessToken, Long pIdUsuarioLogado) {
         try {
-            return ResponseEntity.ok(projetoService.quantidadeProjetosPorStatus());
+            return ResponseEntity.ok(projetoService.quantidadeProjetosPorStatus(pAcessToken, pIdUsuarioLogado));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }

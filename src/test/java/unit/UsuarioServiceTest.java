@@ -43,12 +43,12 @@ public class UsuarioServiceTest {
 
     @Test
     public void loginUsuario_sucess() throws EmailEmUsoException, UsuarioInvalido {
-        usuarioRepository.save(criarUsuarioEntity());
+        usuarioRepository.save(criarUsuarioEntityExistente());
 
         Mockito.when(usuarioRepository.findByEmailAndSenha(
                 criarLoginUsuarioRequestRepresentation().getEmail(),
                 criarLoginUsuarioRequestRepresentation().getSenha())
-        ).thenReturn(criarUsuarioEntity());
+        ).thenReturn(criarUsuarioEntityExistente());
 
         var response = usuarioService.loginUsuario(criarLoginUsuarioRequestRepresentation());
         Assertions.assertNotNull(response);

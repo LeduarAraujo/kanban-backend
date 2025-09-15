@@ -29,10 +29,10 @@ public class SecretariaController implements SecretariaApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> atualizarSecretariaPorId(Long pIdSecretaria
+    public ResponseEntity<SuccessMessageRepresentation> atualizarSecretariaPorId(Long pIdSecretaria, String pAcessToken, Long pIdUsuarioLogado
             , CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
         try {
-            return ResponseEntity.ok().body(secretariaService.atualizarSecretariaPorId(pIdSecretaria
+            return ResponseEntity.ok().body(secretariaService.atualizarSecretariaPorId(pAcessToken, pIdUsuarioLogado, pIdSecretaria
                     , pCadastrarSecretariaRequestRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
@@ -50,9 +50,9 @@ public class SecretariaController implements SecretariaApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SecretariaRepresentation> buscarSecretariaPorId(Long pIdSecretaria) {
+    public ResponseEntity<SecretariaRepresentation> buscarSecretariaPorId(Long pIdSecretaria, String pAcessToken, Long pIdUsuarioLogado) {
         try{
-            return ResponseEntity.ok().body(secretariaService.buscarSecretariaPorId(pIdSecretaria));
+            return ResponseEntity.ok().body(secretariaService.buscarSecretariaPorId(pAcessToken, pIdUsuarioLogado, pIdSecretaria));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -68,9 +68,10 @@ public class SecretariaController implements SecretariaApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> cadastrarSecretaria(CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
+    public ResponseEntity<SuccessMessageRepresentation> cadastrarSecretaria(String pAcessToken, Long pIdUsuarioLogado, CadastrarSecretariaRequestRepresentation pCadastrarSecretariaRequestRepresentation) {
         try{
-            return ResponseEntity.ok().body(secretariaService.cadastrarSecretaria(pCadastrarSecretariaRequestRepresentation));
+            return ResponseEntity.ok().body(secretariaService.cadastrarSecretaria(pAcessToken, pIdUsuarioLogado
+                    , pCadastrarSecretariaRequestRepresentation));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -86,9 +87,9 @@ public class SecretariaController implements SecretariaApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<SuccessMessageRepresentation> excluirSecretaria(Long id) {
+    public ResponseEntity<SuccessMessageRepresentation> excluirSecretaria(Long pIdSecretaria, String pAcessToken, Long pIdUsuarioLogado) {
         try{
-            return ResponseEntity.ok().body(secretariaService.excluirSecretaria(id));
+            return ResponseEntity.ok().body(secretariaService.excluirSecretaria(pAcessToken, pIdUsuarioLogado, pIdSecretaria));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
@@ -103,9 +104,9 @@ public class SecretariaController implements SecretariaApi {
      * or Internal Server Error (status code 500)
      */
     @Override
-    public ResponseEntity<List<SecretariaRepresentation>> listarSecretarias() {
+    public ResponseEntity<List<SecretariaRepresentation>> listarSecretarias(String pAcessToken, Long pIdUsuarioLogado) {
         try{
-            return ResponseEntity.ok().body(secretariaService.listarSecretarias());
+            return ResponseEntity.ok().body(secretariaService.listarSecretarias(pAcessToken, pIdUsuarioLogado));
         } catch (Exception ex) {
             return (ResponseEntity) ErrorFormat.convertToEntity(ex);
         }
