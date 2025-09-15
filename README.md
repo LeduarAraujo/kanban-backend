@@ -130,13 +130,14 @@ src/test/java/
 ```
 
 ## 🛠️ Tecnologias Utilizadas
-- Java 17
-- Spring Boot 3
-- Swagger/OpenAPI
-- Docker
-- Maven
-- Git
-- JUnit (com JaCoCo para cobertura)
+- Java 17 : A versão 17 foi escolhida para a melhor compatibilidade com as bibliotecas usadas.
+- Spring Boot 3 : A versão 3.5.5 ele é mais recente e já traz suporte nativo ao jakarta EE10, que é importante para as minhas configurações de geração de classes do OpenApi.
+- Swagger/OpenAPI :  A versão 3 ela é mais atual, com mais recursos de validações e maior compatibilidade com ferramentas modernas.
+- Docker : Para a conteinerização do ambiente.
+- H2 : Como é um banco de dados em memória, se torna algo mais simples para desenvolvimento e testes rápidos sem necessidade de configurações complexas.
+- Maven : Usei o maven por ser mais estável, e tem uma estrutura mais padronizada e fácil de manter.
+- Git : Para ter controle de versionamento.
+- JUnit (com JaCoCo para cobertura) : Para desenvolver os testes unitários e gerar o relatório de cobertura.
 
 ---
 
